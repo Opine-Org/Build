@@ -1,3 +1,21 @@
 {
-    "name": "virtuecenter/build"
+    "name": "virtuecenter/build",
+    "type": "library",
+    "description": "project builder for separation projects",
+    "keywords": [],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ryan Mahoney",
+            "email": "ryan@virtuecenter.com",
+            "homepage": "http://www.virtuecenter.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+    	"php": ">=5.3.0"
+    },
+    "autoload": {
+        "classmap": ["src/"]
+    }
 }
