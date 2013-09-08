@@ -1,8 +1,8 @@
 $(function() {
 	$().separation([
 		{
-			"id": "{{$collection}}",
-			"url": "{{$url}}/json/{{$collection}}/bySlug/:slug",
+			"id": "{{$plural}}",
+			"url": "{{$url}}/json/{{$plural}}/bySlug/:slug",
 			"args": {},
 			"hbs": "../partials/{{$singular}}.hbs",
 			"selector": "content",

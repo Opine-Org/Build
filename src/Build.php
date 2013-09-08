@@ -1,20 +1,19 @@
 <?php
 class Build {
 	private $root = false;
-	private $url = 
+	private $url = false;
 	private $collections = [];
 
 	public static function project ($path, $url='http://separation.localhost') {
-		new Build($path);
+		new Build($path, $url);
 	}
 
 	public function __construct ($path, $url) {
 		$this->root = $path;
-		$ths->url = $url;
+		$this->url = $url;
 		
 		$this->collections();
 		$this->forms();
-		$this->separations();
 		
 		echo 'Built', "\n";
 		exit;
@@ -38,7 +37,7 @@ class Build {
 
 	private function stubRead ($name, &$collection) {
 		$data = file_get_contents(__DIR__ . '/../static/' . $name);
-		return str_replace(['{{$url}}', '{{$plural}}', '{{$singular}}', '{{$collection}}'], [$this->url, $collection['p'], $collection['s'], $collection['name']], $data);
+		return str_replace(['{{$url}}', '{{$plural}}', '{{$singular}}'], [$this->url, $collection['p'], $collection['s']], $data);
 	}
 
 	private function collections () {
@@ -49,7 +48,6 @@ class Build {
 			require_once($collection);
 			$class = basename($collection, '.php');
 			$this->collections[] = [
-				'name' => $collection,
 				'p' => $class,
 				's' => $class::$singular
 			];
@@ -58,28 +56,28 @@ class Build {
 
 		foreach ($this->collections as $collection) {
 			$filename = $this->root . '/layouts/' . $collection['p'] . '.html';
-			if (!file_exists(filename)) {
-				file_put_contents($filename, $this->stubRead('layout-collection.html'));
+			if (!file_exists($filename)) {
+				file_put_contents($filename, $this->stubRead('layout-collection.html', $collection));
 			}
 			$filename = $this->root . '/partials/' . $collection['p'] . '.hbs';
-			if (!file_exists(filename)) {
-				file_put_contents($filename, $this->stubRead('partial-collection.hbs'));
+			if (!file_exists($filename)) {
+				file_put_contents($filename, $this->stubRead('partial-collection.hbs', $collection));
 			}
 			$filename = $this->root . '/layouts/' . $collection['s'] . '.html';
-			if (!file_exists(filename)) {
-				file_put_contents($filename, $this->stubRead('layout-document.html'));
+			if (!file_exists($filename)) {
+				file_put_contents($filename, $this->stubRead('layout-document.html', $collection));
 			}
 			$filename = $this->root . '/partials/' . $collection['s'] . '.hbs';
-			if (!file_exists(filename)) {
-				file_put_contents($filename, $this->stubRead('partial-document.hbs'));	
+			if (!file_exists($filename)) {
+				file_put_contents($filename, $this->stubRead('partial-document.hbs', $collection));	
 			}
 			$filename = $this->root . '/sep/' . $collection['p'] . '.js';
-			if (!file_exists(filename)) {
-				file_put_contents($filename, $this->stubRead('collection.js'));	
+			if (!file_exists($filename)) {
+				file_put_contents($filename, $this->stubRead('collection.js', $collection));	
 			}
 			$filename = $this->root . '/sep/' . $collection['s'] . '.js';
-			if (!file_exists(filename)) {
-				file_put_contents($filename, $this->stubRead('document.js'));	
+			if (!file_exists($filename)) {
+				file_put_contents($filename, $this->stubRead('document.js', $collection));	
 			}
 		}
 	}
