@@ -7,7 +7,7 @@ class Build {
 		new Build($path);
 	}
 
-	public function __construct ($$path) {
+	public function __construct ($path) {
 		$this->root = $path;
 		
 		$this->collections();
@@ -25,14 +25,36 @@ class Build {
 		exit;
 	}
 
+	private function getPackages ($type) {
+		if (file_exists($this->root . '/' . $type . '/packages.json')) {
+			$packageContainer = json_decode(file_get_contents($this->root . '/' . $type . '/packages.json'));
+			foreach ($packageContainer as $package) {
+				$package = json_decode(file_get_contents($package));
+				foreach ($package as $path) {
+					$destination = basename($path);
+					if (file_exists($this->root . '/' . $type . '/' . $destination)) {
+						continue;
+					}
+					file_put_contents($destination, file_get_contents($collectionPath));
+				}
+			}
+		}
+	}
+
 	private function collections () {
-		//read collections
-
-		//read packages
-
-		//write generated file
-
-		//creeate file cache
+		$this->getPackages('collections');
+		$collections = [];
+		$dirFiles = glob($this->root . '/collections/*.php');
+		foreach ($dirFiles as $collection) {
+			require_once($collection);
+			$class = basename($collection, '.php');
+			$collections[] = [
+				'name' => $collection,
+				'p' => $class,
+				's' => $class::$singular
+			];
+		}
+		file_put_contents($this->root . '/collections/cache.json', json_encode($collections, JSON_PRETTY_PRINT));
 	}
 
 	private function layouts () {
@@ -85,5 +107,3 @@ class Build {
 		//create maste route config file for everything -- on disk and in ram
 	}
 }
-
-Build::run($argv[1], $argv[2], $argv[3]);
