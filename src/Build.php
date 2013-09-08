@@ -1,31 +1,26 @@
 <?php
 class Build {
-	private $root = false; 
+	private $root = false;
+	private $url = 
 	private $collections = [];
 
-	public static function project ($path) {
+	public static function project ($path, $url='http://separation.localhost') {
 		new Build($path);
 	}
 
-	public function __construct ($path) {
+	public function __construct ($path, $url) {
 		$this->root = $path;
+		$ths->url = $url;
 		
 		$this->collections();
-		$this->layouts();
-		$this->partials();
 		$this->forms();
 		$this->separations();
 		
-		//$this->admins();
-		//$this->events();
-		//$this->custom();
-		
-		//$this->masterCache();
 		echo 'Built', "\n";
 		exit;
 	}
 
-	private function getPackages ($type) {
+	private function packages ($type) {
 		if (file_exists($this->root . '/' . $type . '/packages.json')) {
 			$packageContainer = json_decode(file_get_contents($this->root . '/' . $type . '/packages.json'));
 			foreach ($packageContainer as $package) {
@@ -41,42 +36,61 @@ class Build {
 		}
 	}
 
+	private function stubRead ($name, &$collection) {
+		$data = file_get_contents(__DIR__ . '/../static/' . $name);
+		return str_replace(['{{$url}}', '{{$plural}}', '{{$singular}}', '{{$collection}}'], [$this->url, $collection['p'], $collection['s'], $collection['name']], $data);
+	}
+
 	private function collections () {
-		$this->getPackages('collections');
-		$collections = [];
+		$this->packages('collections');
+		$this->collections = [];
 		$dirFiles = glob($this->root . '/collections/*.php');
 		foreach ($dirFiles as $collection) {
 			require_once($collection);
 			$class = basename($collection, '.php');
-			$collections[] = [
+			$this->collections[] = [
 				'name' => $collection,
 				'p' => $class,
 				's' => $class::$singular
 			];
 		}
-		file_put_contents($this->root . '/collections/cache.json', json_encode($collections, JSON_PRETTY_PRINT));
-	}
+		file_put_contents($this->root . '/collections/cache.json', json_encode($this->collections, JSON_PRETTY_PRINT));
 
-	private function layouts () {
-		//generate a layout for each collection and singular if they don't already exist
-	}
-
-	private function partials () {
-		//generate a template for each collection and singular if they don't already exist
+		foreach ($this->collections as $collection) {
+			$filename = $this->root . '/layouts/' . $collection['p'] . '.html';
+			if (!file_exists(filename)) {
+				file_put_contents($filename, $this->stubRead('layout-collection.html'));
+			}
+			$filename = $this->root . '/partials/' . $collection['p'] . '.hbs';
+			if (!file_exists(filename)) {
+				file_put_contents($filename, $this->stubRead('partial-collection.hbs'));
+			}
+			$filename = $this->root . '/layouts/' . $collection['s'] . '.html';
+			if (!file_exists(filename)) {
+				file_put_contents($filename, $this->stubRead('layout-document.html'));
+			}
+			$filename = $this->root . '/partials/' . $collection['s'] . '.hbs';
+			if (!file_exists(filename)) {
+				file_put_contents($filename, $this->stubRead('partial-document.hbs'));	
+			}
+			$filename = $this->root . '/sep/' . $collection['p'] . '.js';
+			if (!file_exists(filename)) {
+				file_put_contents($filename, $this->stubRead('collection.js'));	
+			}
+			$filename = $this->root . '/sep/' . $collection['s'] . '.js';
+			if (!file_exists(filename)) {
+				file_put_contents($filename, $this->stubRead('document.js'));	
+			}
+		}
 	}
 
 	private function forms () {
 		//read forms
 
 		//read packages
+		$this->packages('forms');
 
 		//creeate file cache
-	}
-
-	private function separations () {
-		//generate a separation config for each collection and singular if they don't already exist
-
-		//use mode to determine where to get data from: local, development, production
 	}
 
 	private function intranets () {
@@ -101,9 +115,5 @@ class Build {
 		//read packages
 
 		///create file cache
-	}
-
-	private function masterCache () {
-		//create maste route config file for everything -- on disk and in ram
 	}
 }
