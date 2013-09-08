@@ -1,28 +1,28 @@
 <?php
 class Build {
-	private $projectName = false;
 	private $root = false; 
-	private $mode = 'server';
 	private $collections = [];
 
-	public static function run ($path) {
-		$generate = new Build($path);
+	public static function project ($path) {
+		new Build($path);
 	}
 
-	public function __construct ($projectName, $path, $mode='development') {
+	public function __construct ($$path) {
 		$this->root = $path;
-		$this->projectName = $projectName;
-		$this->mode = $mode;
+		
 		$this->collections();
-		$this->fixtures();
 		$this->layouts();
-		$this->templates();
+		$this->partials();
 		$this->forms();
 		$this->separations();
-		$this->admins();
-		$this->events();
-		$this->custom();
-		$this->masterCache();
+		
+		//$this->admins();
+		//$this->events();
+		//$this->custom();
+		
+		//$this->masterCache();
+		echo 'Built', "\n";
+		exit;
 	}
 
 	private function collections () {
