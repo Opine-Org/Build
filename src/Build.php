@@ -83,12 +83,27 @@ class Build {
 	}
 
 	private function forms () {
-		//read forms
-
-		//read packages
 		$this->packages('forms');
+		$this->forms = [];
+		$dirFiles = glob($this->root . '/forms/*.php');
+		foreach ($dirFiles as $form) {
+			$class = basename($form, '.php');
+			$this->forms[] = $class;
+		}
+		file_put_contents($this->root . '/forms/cache.json', json_encode($this->forms, JSON_PRETTY_PRINT));
+		return;
 
-		//creeate file cache
+		foreach ($this->forms as $form) {
+			$fields = [];
+			$filename = $this->root . '/layouts/form-' . $form . '.html';
+			if (!file_exists($filename)) {
+				file_put_contents($filename, $this->stubRead('form.html', $fields));
+			}
+			$filename = $this->root . '/partials/form-' . $form . '.hbs';
+			if (!file_exists($filename)) {
+				file_put_contents($filename, $this->stubRead('form.hbs', $fields));
+			}
+		}
 	}
 
 	private function intranets () {
