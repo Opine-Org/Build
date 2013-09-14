@@ -104,23 +104,26 @@ class Build {
 				$data = file_get_contents(__DIR__ . '/../static/form.hbs');
 				require $this->root . '/forms/' . $form . '.php';
 				$obj = new $form();
-				$generated = '';
+				ob_start();
 				foreach ($obj->fields as $field) {
-					$generated .= '
-						<div class="form-group">
-    						<label for="inputPassword" class="col-lg-2 control-label">' . ucwords(str_replace('_', ' ', $field['name'])) . '</label>
-    						<div class="col-lg-10">
-    							{{' . $field['name'] . '}}
-    						</div>
-  						</div>';
+					echo '
+	<div class="form-group">
+		<label for="inputPassword" class="col-lg-2 control-label">' . ucwords(str_replace('_', ' ', $field['name'])) . '</label>
+		<div class="col-lg-10">
+			{{{' . $field['name'] . '}}}
+		</div>
+	</div>';
 				}
+				echo '
+	<input type="submit" />';
+				$generated = ob_get_clean();
 				$data = str_replace(['{{$form}}', '{{$generated}}'], [$form, $generated], $data);
 				file_put_contents($filename, $data);
 			}
 			$filename = $this->root . '/sep/form-' . $form . '.js';
 			if (!file_exists($filename)) {
-				$data = file_get_contents(__DIR__ . '/../static/form.hbs');
-				$data = str_replace(['{{$form}}'], [$form], $data);
+				$data = file_get_contents(__DIR__ . '/../static/form.js');
+				$data = str_replace(['{{$form}}', '{{$url}}'], [$form, $this->url], $data);
 				file_put_contents($filename, $data);	
 			}
 		}
