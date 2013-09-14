@@ -12,11 +12,45 @@ class Build {
 		$this->root = $path;
 		$this->url = $url;
 		
+		$this->vhost();
+		$this->directories();
+		$this->route();
 		$this->collections();
 		$this->forms();
+		$this->moveJS();
 		
 		echo 'Built', "\n";
 		exit;
+	}
+
+	private function moveJS () {
+		//separation
+		//hashchange
+		//jquery
+		//jquery form
+	}
+
+	private function route () {
+		$routePath = $this->root . '/Route.php';
+		if (!file_exists($routePath)) {
+			file_put_contents($routePath, file_get_contents(__DIR__ . '/../static/Route.php'));
+		}
+	}
+
+	private function vhost () {
+		$vhostPath = $this->root . '/vhost.conf';
+		if (!file_exists($vhostPath)) {
+			file_put_contents($vhostPath, file_get_contents(__DIR__ . '/../static/vhost.conf'));
+		}
+	}
+
+	private function directories () {
+		foreach (['collections', 'config', 'css', 'forms', 'js', 'layouts', 'partials', 'sep', 'images', 'fonts', 'mvc'] as $dir) {
+			$dirPath = $this->root . '/' . $dir;
+			if (!file_exists($dirPath)) {
+				mkdir($dirPath);
+			}
+		}
 	}
 
 	private function packages ($type) {
