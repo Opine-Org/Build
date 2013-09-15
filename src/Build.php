@@ -37,6 +37,7 @@ class Build {
 		copy($this->root . '/vendor/virtuecenter/separation/jquery.separation.js', $this->root . '/js/jquery.separation.js');
 		copy($this->root . '/vendor/virtuecenter/separation/dependencies/jquery.ba-hashchange.js', $this->root . '/js/jquery.ba-hashchange.js');
 		copy($this->root . '/vendor/virtuecenter/separation/dependencies/jquery.form.js', $this->root . '/js/jquery.form.js');
+		copy($this->root . '/vendor/virtuecenter/separation/dependencies/require.js', $this->root . '/js/require.js');
 	}
 
 	private function route () {
