@@ -32,7 +32,7 @@ class Build {
 	}
 
 	private function moveStatic () {
-		copy($this->root . '/vendor/components/jquery/jquery.min.js', $this->root . '/js/jquery.min.js');
+		copy($this->root . '/vendor/virtuecenter/separation/dependencies/jquery.min.js', $this->root . '/js/jquery.min.js');
 		copy($this->root . '/vendor/virtuecenter/separation/dependencies/handlebars.min.js', $this->root . '/js/handlebars.min.js');
 		copy($this->root . '/vendor/virtuecenter/separation/jquery.separation.js', $this->root . '/js/jquery.separation.js');
 		copy($this->root . '/vendor/virtuecenter/separation/dependencies/jquery.ba-hashchange.js', $this->root . '/js/jquery.ba-hashchange.js');
