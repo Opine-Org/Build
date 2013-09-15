@@ -14,20 +14,29 @@ class Build {
 		
 		$this->vhost();
 		$this->directories();
+		$this->db();
 		$this->route();
 		$this->collections();
 		$this->forms();
-		$this->moveJS();
+		$this->moveStatic();
 		
 		echo 'Built', "\n";
 		exit;
 	}
 
-	private function moveJS () {
-		//separation
-		//hashchange
-		//jquery
-		//jquery form
+	private function db () {
+		$dbPath = $this->root . '/config/db.php';
+		if (!file_exists($dbPath)) {
+			file_put_contents($dbPath, file_get_contents(__DIR__ . '/../static/db.php'));
+		}
+	}
+
+	private function moveStatic () {
+		copy($this->root . '/vendor/components/jquery/jquery.min.js', $this->root . '/js/jquery.min.js');
+		copy($this->root . '/vendor/components/handlebars.js/handlebars.js', $this->root . '/js/handlebars.js');
+		copy($this->root . '/vendor/virtuecenter/separation/jquery.separation.js', $this->root . '/js/jquery.separation.js');
+		copy($this->root . '/vendor/virtuecenter/separation/dependencies/jquery.ba-hashchange.js', $this->root . '/js/jquery.ba-hashchange.js');
+		copy($this->root . '/vendor/virtuecenter/separation/dependencies/jquery.form.js', $this->root . '/js/jquery.form.js');
 	}
 
 	private function route () {
@@ -142,7 +151,7 @@ class Build {
 				foreach ($obj->fields as $field) {
 					echo '
 	<div class="form-group">
-		<label for="inputPassword" class="col-lg-2 control-label">' . ucwords(str_replace('_', ' ', $field['name'])) . '</label>
+		<label for="' . $field['name'] . '" class="col-lg-2 control-label">' . ucwords(str_replace('_', ' ', $field['name'])) . '</label>
 		<div class="col-lg-10">
 			{{{' . $field['name'] . '}}}
 		</div>
