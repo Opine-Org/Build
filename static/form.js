@@ -5,7 +5,7 @@ $(function() {
 			"url": "{{$url}}/json-form/{{$form}}",
 			"args": {},
 			"hbs": "form-{{$form}}.hbs",
-			"selector": "content",
+			"target": "content",
 			"type": "Form"
 		}
 	]);

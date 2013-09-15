@@ -5,7 +5,7 @@ $(function() {
 			"url": "{{$url}}/json-data/{{$plural}}/bySlug/:slug",
 			"args": {},
 			"hbs": "{{$singular}}.hbs",
-			"selector": "content",
+			"target": "content",
 			"type": "Document"
 		}
 	]);
