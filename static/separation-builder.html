@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Separation Config Builder</title>
+        <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="../bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" />
+        <style>
+            body {
+                padding-top: 50px;
+                padding-bottom: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Separation Config Builder</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="https://github.com/virtuecenter/separation">Project</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="jumbotron">
+            <div class="container">
+                <h1>Hello, developer!</h1>
+                <p>This is tool for generating Separation.js javascript config files.</p>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2>Add entries for your config<a class="btn btn-info append" style="float: right">Add Entry</a></h2>
+                    <form method="post">
+                        <table class="table table-striped element-table">
+                            <tbody>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Collection</th>
+                                    <th>Method</th>
+                                    <th>Handlebar</th>
+                                    <th>Target</th>
+                                </tr>
+                                
+                                
+
+                            </tbody>
+                        </table>
+                        <hr />
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="layout">Layout Name</label>
+                                    <input type="text" class="form-control" id="layout" placeholder="For example: blogs.html" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="data">Data Source</label>
+                                    <select name="data" class="form-control" id="data"><option>http://json.virtuecenter.com</option><option>http://localhost</option></select>
+                                </div>
+                            </div>
+                        </div>
+                        <input class="btn btn-lg btn-primary btn-block" type="submit" value="Generate Config" />
+                    </form>
+                </div>
+            </div>
+            <hr>
+            <footer>
+                <p>&copy; Virtue Center 2013</p>
+            </footer>
+        </div>
+        <script src="../js/jquery.min.js"></script>
+        <script src="../bootstrap/js/bootstrap.min.js"></script>
+        <script src="../js/separation-builder.js"></script>
+    </body>
+</html>

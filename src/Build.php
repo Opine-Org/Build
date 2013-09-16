@@ -18,6 +18,7 @@ class Build {
 		$this->route();
 		$this->collections();
 		$this->forms();
+		$this->blurbs();
 		$this->moveStatic();
 		
 		echo 'Built', "\n";
@@ -32,12 +33,18 @@ class Build {
 	}
 
 	private function moveStatic () {
-		copy($this->root . '/vendor/virtuecenter/separation/dependencies/jquery.min.js', $this->root . '/js/jquery.min.js');
-		copy($this->root . '/vendor/virtuecenter/separation/dependencies/handlebars.min.js', $this->root . '/js/handlebars.min.js');
-		copy($this->root . '/vendor/virtuecenter/separation/jquery.separation.js', $this->root . '/js/jquery.separation.js');
-		copy($this->root . '/vendor/virtuecenter/separation/dependencies/jquery.ba-hashchange.js', $this->root . '/js/jquery.ba-hashchange.js');
-		copy($this->root . '/vendor/virtuecenter/separation/dependencies/jquery.form.js', $this->root . '/js/jquery.form.js');
-		copy($this->root . '/vendor/virtuecenter/separation/dependencies/require.js', $this->root . '/js/require.js');
+		@symlink($this->root . '/vendor/virtuecenter/separation/dependencies/jquery.min.js', $this->root . '/js/jquery.min.js');
+		@symlink($this->root . '/vendor/virtuecenter/separation/dependencies/handlebars.min.js', $this->root . '/js/handlebars.min.js');
+		@symlink($this->root . '/vendor/virtuecenter/separation/jquery.separation.js', $this->root . '/js/jquery.separation.js');
+		@symlink($this->root . '/vendor/virtuecenter/separation/dependencies/jquery.ba-hashchange.js', $this->root . '/js/jquery.ba-hashchange.js');
+		@symlink($this->root . '/vendor/virtuecenter/separation/dependencies/jquery.form.js', $this->root . '/js/jquery.form.js');
+		@symlink($this->root . '/vendor/virtuecenter/separation/dependencies/require.js', $this->root . '/js/require.js');
+		@symlink($this->root . '/vendor/twbs/bootstrap/dist', $this->root . '/bootstrap');
+		@symlink($this->root . '/vendor/twbs/bootstrap/assets/css/docs.css', $this->root . '/css/docs.css');
+
+		//separation builder
+		@symlink($this->root . '/vendor/virtuecenter/build/static/separation-builder.html', $this->root . '/layouts/separation-builder.html');
+		@symlink($this->root . '/vendor/virtuecenter/build/static/separation-builder.js', $this->root . '/js/separation-builder.js');
 	}
 
 	private function route () {
@@ -55,7 +62,7 @@ class Build {
 	}
 
 	private function directories () {
-		foreach (['collections', 'config', 'css', 'forms', 'js', 'layouts', 'partials', 'sep', 'images', 'fonts', 'mvc'] as $dir) {
+		foreach (['collections', 'config', 'css', 'forms', 'js', 'layouts', 'partials', 'sep', 'images', 'fonts', 'mvc', 'events', 'blurbs'] as $dir) {
 			$dirPath = $this->root . '/' . $dir;
 			if (!file_exists($dirPath)) {
 				mkdir($dirPath);
@@ -173,23 +180,23 @@ class Build {
 		}
 	}
 
+	private function blurbs () {
+		//read admin intranets
+
+		//read packages
+
+		//creeate file cache
+	}	
+
 	private function intranets () {
-		//read admin instranets
+		//read admin intranets
 
 		//read packages
 
 		//creeate file cache
 	}
 
-	private function events () {
-		//read admins
-
-		//read packages
-
-		//creeate file cache
-	}
-
-	private function custom () {
+	private function mvc () {
 		//read mvc setup
 
 		//read packages
