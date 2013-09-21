@@ -1,4 +1,6 @@
 <?php
+namespace Build;
+
 class Build {
 	private $root = false;
 	private $url = false;
@@ -19,10 +21,24 @@ class Build {
 		$this->collections();
 		$this->forms();
 		$this->blurbs();
+		$this->events();
 		$this->moveStatic();
 		
 		echo 'Built', "\n";
 		exit;
+	}
+
+	private function events () {
+		$this->packages('events');
+		$this->events = [];
+		$directories = glob($this->root . '/events');
+		foreach ($directories as $signal) {
+			$dirFiles = glob($this->root . '/events/' . $signal . '*.php');
+			foreach ($dirFiles as $event) {
+				$this->events[$signal][] = basename($event, '.php');
+			}
+		}
+		file_put_contents($this->root . '/events/cache.json', json_encode($this->events, JSON_PRETTY_PRINT));
 	}
 
 	private function db () {

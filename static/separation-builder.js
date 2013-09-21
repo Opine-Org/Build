@@ -4,7 +4,7 @@ $(document).ready(function () {
         collections = data;
         appendEntry();
     });
-    $('.element-table').on('change', '.collection', function () {
+    $('.collection-table').on('change', '.collection', function () {
     	console.log('changed');
     	for (var i=0; i < collections.length; i++) {
     		if (collections[i]['p'] != $(this).val()) {
@@ -24,7 +24,7 @@ $(document).ready(function () {
 });
 
 var appendEntry = function () {
-	$('.element-table tbody').append('<tr>\
+	$('.collection-table tbody').append('<tr>\
         <td><input name="id[]" class="form-control" type="text" placeholder="For example: blogs" /></td>\
         <td><select name="collection[]" class="form-control collection"><option>None</option></select></td>\
         <td><select name="method[]" class="form-control method"><option></option></select></td>\
