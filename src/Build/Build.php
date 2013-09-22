@@ -1,5 +1,10 @@
 <?php
 namespace Build;
+use Event\EventRoute;
+use Collection\CollectionRoute;
+use Helper\HelperRoute;
+use Cache\Cache;
+use Filter\Filter;
 
 class Build {
 	private $root = false;
@@ -19,53 +24,30 @@ class Build {
 		$this->db();
 		$this->route();
 		$this->collections();
+		$this->filters();
 		$this->forms();
 		$this->helpers();
 		$this->events();
 		$this->moveStatic();
-		$this->cache();
 		
 		echo 'Built', "\n";
 		exit;
 	}
 
-	private function cache () {
-		$caches = [
-			'helpers', 'events', 'filters', 'collections', 'forms'
-		];
-		
+	private function collections () {
+		Cache::factory()->set($this->root . '-collections.json', CollectionRoute::build($this->root), MEMCACHE_COMPRESSED, 0);
+	}
+
+	private function filters () {
+		Cache::factory()->set($this->root . '-filters.json', Filter::build($this->root), MEMCACHE_COMPRESSED, 0);
 	}
 
 	private function helpers () {
-		$this->helpers = [];
-		$helpers = glob($this->root . '/helpers/*.php');
-		foreach ($helpers as $helper) {
-			$this->helpers[] = basename($helper, '.php');
-		}
-		file_put_contents($this->root . '/helpers/cache.json', json_encode($this->helpers, JSON_PRETTY_PRINT));
-
-		$helpers = glob($this->root . '/helpers/*.js');
-		$jsCache = '';
-		foreach ($helpers as $helper) {
-			if (basename($helper) == 'helpers.js') {
-				continue;
-			}
-			$jsCache .= file_get_contents($helper) . "\n\n";
-		}
-		file_put_contents($this->root . '/js/helpers.js', $jsCache);
+		Cache::factory()->set($this->root . '-helpers.json', HelperRoute::build($this->root), MEMCACHE_COMPRESSED, 0);
 	}
 
 	private function events () {
-		$this->events = [];
-		$directories = glob($this->root . '/events/*', GLOB_ONLYDIR);
-		foreach ($directories as $signal) {
-			$signal = basename($signal);
-			$dirFiles = glob($this->root . '/events/' . $signal . '/*.php');
-			foreach ($dirFiles as $event) {
-				$this->events[$signal][] = basename($event, '.php');
-			}
-		}
-		file_put_contents($this->root . '/events/cache.json', json_encode($this->events, JSON_PRETTY_PRINT));
+		Cache::factory()->set($this->root . '-events.json', EventRoute::build($this->root), MEMCACHE_COMPRESSED, 0);
 	}
 
 	private function db () {
@@ -105,56 +87,10 @@ class Build {
 	}
 
 	private function directories () {
-		foreach (['collections', 'config', 'css', 'forms', 'js', 'layouts', 'partials', 'sep', 'images', 'fonts', 'mvc', 'events', 'helpers'] as $dir) {
+		foreach (['collections', 'config', 'css', 'forms', 'js', 'layouts', 'partials', 'sep', 'images', 'fonts', 'mvc', 'events', 'helpers', 'filters'] as $dir) {
 			$dirPath = $this->root . '/' . $dir;
 			if (!file_exists($dirPath)) {
 				mkdir($dirPath);
-			}
-		}
-	}
-
-	private function collectionStubRead ($name, &$collection) {
-		$data = file_get_contents(__DIR__ . '/../static/' . $name);
-		return str_replace(['{{$url}}', '{{$plural}}', '{{$singular}}'], [$this->url, $collection['p'], $collection['s']], $data);
-	}
-
-	private function collections () {
-		$this->collections = [];
-		$dirFiles = glob($this->root . '/collections/*.php');
-		foreach ($dirFiles as $collection) {
-			require_once($collection);
-			$class = basename($collection, '.php');
-			$this->collections[] = [
-				'p' => $class,
-				's' => $class::$singular
-			];
-		}
-		file_put_contents($this->root . '/collections/cache.json', json_encode($this->collections, JSON_PRETTY_PRINT));
-
-		foreach ($this->collections as $collection) {
-			$filename = $this->root . '/layouts/' . $collection['p'] . '.html';
-			if (!file_exists($filename)) {
-				file_put_contents($filename, $this->collectionStubRead('layout-collection.html', $collection));
-			}
-			$filename = $this->root . '/partials/' . $collection['p'] . '.hbs';
-			if (!file_exists($filename)) {
-				file_put_contents($filename, $this->collectionStubRead('partial-collection.hbs', $collection));
-			}
-			$filename = $this->root . '/layouts/' . $collection['s'] . '.html';
-			if (!file_exists($filename)) {
-				file_put_contents($filename, $this->collectionStubRead('layout-document.html', $collection));
-			}
-			$filename = $this->root . '/partials/' . $collection['s'] . '.hbs';
-			if (!file_exists($filename)) {
-				file_put_contents($filename, $this->collectionStubRead('partial-document.hbs', $collection));	
-			}
-			$filename = $this->root . '/sep/' . $collection['p'] . '.js';
-			if (!file_exists($filename)) {
-				file_put_contents($filename, $this->collectionStubRead('collection.js', $collection));	
-			}
-			$filename = $this->root . '/sep/' . $collection['s'] . '.js';
-			if (!file_exists($filename)) {
-				file_put_contents($filename, $this->collectionStubRead('document.js', $collection));	
 			}
 		}
 	}
@@ -203,11 +139,5 @@ class Build {
 				file_put_contents($filename, $data);	
 			}
 		}
-	}
-
-	private function intranets () {
-		//read admin intranets
-
-		//creeate file cache
 	}
 }
