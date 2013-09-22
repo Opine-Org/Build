@@ -20,20 +20,47 @@ class Build {
 		$this->route();
 		$this->collections();
 		$this->forms();
-		$this->blurbs();
+		$this->helpers();
 		$this->events();
 		$this->moveStatic();
+		$this->cache();
 		
 		echo 'Built', "\n";
 		exit;
 	}
 
+	private function cache () {
+		$caches = [
+			'helpers', 'events', 'filters', 'collections', 'forms'
+		];
+		
+	}
+
+	private function helpers () {
+		$this->helpers = [];
+		$helpers = glob($this->root . '/helpers/*.php');
+		foreach ($helpers as $helper) {
+			$this->helpers[] = basename($helper, '.php');
+		}
+		file_put_contents($this->root . '/helpers/cache.json', json_encode($this->helpers, JSON_PRETTY_PRINT));
+
+		$helpers = glob($this->root . '/helpers/*.js');
+		$jsCache = '';
+		foreach ($helpers as $helper) {
+			if (basename($helper) == 'helpers.js') {
+				continue;
+			}
+			$jsCache .= file_get_contents($helper) . "\n\n";
+		}
+		file_put_contents($this->root . '/js/helpers.js', $jsCache);
+	}
+
 	private function events () {
-		$this->packages('events');
 		$this->events = [];
-		$directories = glob($this->root . '/events');
+		$directories = glob($this->root . '/events/*', GLOB_ONLYDIR);
 		foreach ($directories as $signal) {
-			$dirFiles = glob($this->root . '/events/' . $signal . '*.php');
+			$signal = basename($signal);
+			$dirFiles = glob($this->root . '/events/' . $signal . '/*.php');
 			foreach ($dirFiles as $event) {
 				$this->events[$signal][] = basename($event, '.php');
 			}
@@ -78,26 +105,10 @@ class Build {
 	}
 
 	private function directories () {
-		foreach (['collections', 'config', 'css', 'forms', 'js', 'layouts', 'partials', 'sep', 'images', 'fonts', 'mvc', 'events', 'blurbs'] as $dir) {
+		foreach (['collections', 'config', 'css', 'forms', 'js', 'layouts', 'partials', 'sep', 'images', 'fonts', 'mvc', 'events', 'helpers'] as $dir) {
 			$dirPath = $this->root . '/' . $dir;
 			if (!file_exists($dirPath)) {
 				mkdir($dirPath);
-			}
-		}
-	}
-
-	private function packages ($type) {
-		if (file_exists($this->root . '/' . $type . '/packages.json')) {
-			$packageContainer = json_decode(file_get_contents($this->root . '/' . $type . '/packages.json'));
-			foreach ($packageContainer as $package) {
-				$package = json_decode(file_get_contents($package));
-				foreach ($package as $path) {
-					$destination = basename($path);
-					if (file_exists($this->root . '/' . $type . '/' . $destination)) {
-						continue;
-					}
-					file_put_contents($destination, file_get_contents($collectionPath));
-				}
 			}
 		}
 	}
@@ -108,7 +119,6 @@ class Build {
 	}
 
 	private function collections () {
-		$this->packages('collections');
 		$this->collections = [];
 		$dirFiles = glob($this->root . '/collections/*.php');
 		foreach ($dirFiles as $collection) {
@@ -150,7 +160,6 @@ class Build {
 	}
 
 	private function forms () {
-		$this->packages('forms');
 		$this->forms = [];
 		$dirFiles = glob($this->root . '/forms/*.php');
 		foreach ($dirFiles as $form) {
@@ -196,27 +205,9 @@ class Build {
 		}
 	}
 
-	private function blurbs () {
-		//read admin intranets
-
-		//read packages
-
-		//creeate file cache
-	}	
-
 	private function intranets () {
 		//read admin intranets
 
-		//read packages
-
 		//creeate file cache
-	}
-
-	private function mvc () {
-		//read mvc setup
-
-		//read packages
-
-		///create file cache
 	}
 }
