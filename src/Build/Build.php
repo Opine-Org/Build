@@ -4,6 +4,7 @@ use Event\EventRoute;
 use Collection\CollectionRoute;
 use Helper\HelperRoute;
 use Cache\Cache;
+use Config\ConfigRoute;
 use Filter\Filter;
 
 class Build {
@@ -19,6 +20,8 @@ class Build {
 		$this->root = $path;
 		$this->url = $url;
 		
+		$this->clearCache();
+		$this->config();
 		$this->vhost();
 		$this->directories();
 		$this->db();
@@ -34,8 +37,21 @@ class Build {
 		exit;
 	}
 
+	private function config () {
+		ConfigRoute::build($this->root);
+	}
+
+	private function clearCache () {
+		Cache::deleteBatch([
+			$this->root . '-collections.json',
+			$this->root . '-filters.json',
+			$this->root . '-helpers.json',
+			$this->root . '-events.json'
+		]);
+	}
+
 	private function collections () {
-		Cache::factory()->set($this->root . '-collections.json', CollectionRoute::build($this->root), MEMCACHE_COMPRESSED, 0);
+		Cache::factory()->set($this->root . '-collections.json', CollectionRoute::build($this->root, $this->url, __DIR__), MEMCACHE_COMPRESSED, 0);
 	}
 
 	private function filters () {

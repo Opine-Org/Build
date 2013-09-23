@@ -8,7 +8,8 @@ require([p+"/js/jquery.min.js",p+"/js/jquery.form.js",p+"/js/jquery.ba-hashchang
 				"args": {},
 				"hbs": "{{$plural}}.hbs",
 				"target": "content",
-				"type": "Collection"
+				"type": "Collection",
+				"cache": 600
 			}
 		]);
 	});
