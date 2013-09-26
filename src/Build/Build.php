@@ -22,7 +22,6 @@ class Build {
 		
 		$this->clearCache();
 		$this->config();
-		$this->vhost();
 		$this->directories();
 		$this->db();
 		$this->route();
@@ -92,13 +91,6 @@ class Build {
 		$routePath = $this->root . '/Route.php';
 		if (!file_exists($routePath)) {
 			file_put_contents($routePath, file_get_contents(__DIR__ . '/../../static/Route.php'));
-		}
-	}
-
-	private function vhost () {
-		$vhostPath = $this->root . '/vhost.conf';
-		if (!file_exists($vhostPath)) {
-			file_put_contents($vhostPath, file_get_contents(__DIR__ . '/../../static/vhost.conf'));
 		}
 	}
 
