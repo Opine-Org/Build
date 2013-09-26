@@ -12,7 +12,7 @@ class Build {
 	private $url = false;
 	private $collections = [];
 
-	public static function project ($path, $url='http://separation.localhost') {
+	public static function project ($path, $url='http://json.virtuecenter.com') {
 		new Build($path, $url);
 	}
 
