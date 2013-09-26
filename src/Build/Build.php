@@ -69,7 +69,7 @@ class Build {
 	private function db () {
 		$dbPath = $this->root . '/config/db.php';
 		if (!file_exists($dbPath)) {
-			file_put_contents($dbPath, file_get_contents(__DIR__ . '/../static/db.php'));
+			file_put_contents($dbPath, file_get_contents(__DIR__ . '/../../static/db.php'));
 		}
 	}
 
@@ -91,14 +91,14 @@ class Build {
 	private function route () {
 		$routePath = $this->root . '/Route.php';
 		if (!file_exists($routePath)) {
-			file_put_contents($routePath, file_get_contents(__DIR__ . '/../static/Route.php'));
+			file_put_contents($routePath, file_get_contents(__DIR__ . '/../../static/Route.php'));
 		}
 	}
 
 	private function vhost () {
 		$vhostPath = $this->root . '/vhost.conf';
 		if (!file_exists($vhostPath)) {
-			file_put_contents($vhostPath, file_get_contents(__DIR__ . '/../static/vhost.conf'));
+			file_put_contents($vhostPath, file_get_contents(__DIR__ . '/../../static/vhost.conf'));
 		}
 	}
 
@@ -123,13 +123,13 @@ class Build {
 		foreach ($this->forms as $form) {
 			$filename = $this->root . '/layouts/form-' . $form . '.html';
 			if (!file_exists($filename)) {
-				$data = file_get_contents(__DIR__ . '/../static/form.html');
+				$data = file_get_contents(__DIR__ . '/../../static/form.html');
 				$data = str_replace(['{{$form}}'], [$form], $data);
 				file_put_contents($filename, $data);
 			}
 			$filename = $this->root . '/partials/form-' . $form . '.hbs';
 			if (!file_exists($filename)) {
-				$data = file_get_contents(__DIR__ . '/../static/form.hbs');
+				$data = file_get_contents(__DIR__ . '/../../static/form.hbs');
 				require $this->root . '/forms/' . $form . '.php';
 				$obj = new $form();
 				ob_start();
@@ -150,7 +150,7 @@ class Build {
 			}
 			$filename = $this->root . '/sep/form-' . $form . '.js';
 			if (!file_exists($filename)) {
-				$data = file_get_contents(__DIR__ . '/../static/form.js');
+				$data = file_get_contents(__DIR__ . '/../../static/form.js');
 				$data = str_replace(['{{$form}}', '{{$url}}'], [$form, $this->url], $data);
 				file_put_contents($filename, $data);	
 			}
