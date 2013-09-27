@@ -7,7 +7,6 @@ require([p+"/js/jquery.min.js",p+"/js/jquery.form.js",p+"/js/jquery.ba-hashchang
 				"url": "{{$url}}/json-data/{{$plural}}/bySlug/:slug",
 				"args": {},
 				"hbs": "{{$singular}}.hbs",
-				"target": "content",
 				"type": "Document"
 			}
 		]);

@@ -7,7 +7,6 @@ require([p+"/js/jquery.min.js",p+"/js/jquery.form.js",p+"/js/jquery.ba-hashchang
 				"url": "{{$url}}/json-form/{{$form}}",
 				"args": {},
 				"hbs": "form-{{$form}}.hbs",
-				"target": "content",
 				"type": "Form"
 			}
 		]);

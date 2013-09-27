@@ -29,7 +29,6 @@ var appendEntry = function () {
         <td><select name="collection[]" class="form-control collection"><option>None</option></select></td>\
         <td><select name="method[]" class="form-control method"><option></option></select></td>\
         <td><input name="hbs[]" class="form-control" type="text" placeholder="For example: blogs.hbs" /></td>\
-        <td><input name="target[]" class="form-control" type="text" placeholder="For example: content" /></td>\
     </tr>');
 
 	$('.collection').each(function (index, element) {
