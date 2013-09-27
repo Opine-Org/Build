@@ -50,19 +50,19 @@ class Build {
 	}
 
 	private function collections () {
-		Cache::factory()->set($this->root . '-collections.json', CollectionRoute::build($this->root, $this->url, __DIR__), MEMCACHE_COMPRESSED, 0);
+		Cache::factory()->set($this->root . '-collections.json', CollectionRoute::build($this->root, $this->url, __DIR__), 2, 0);
 	}
 
 	private function filters () {
-		Cache::factory()->set($this->root . '-filters.json', Filter::build($this->root), MEMCACHE_COMPRESSED, 0);
+		Cache::factory()->set($this->root . '-filters.json', Filter::build($this->root), 2, 0);
 	}
 
 	private function helpers () {
-		Cache::factory()->set($this->root . '-helpers.json', HelperRoute::build($this->root), MEMCACHE_COMPRESSED, 0);
+		Cache::factory()->set($this->root . '-helpers.json', HelperRoute::build($this->root), 2, 0);
 	}
 
 	private function events () {
-		Cache::factory()->set($this->root . '-events.json', EventRoute::build($this->root), MEMCACHE_COMPRESSED, 0);
+		Cache::factory()->set($this->root . '-events.json', EventRoute::build($this->root), 2, 0);
 	}
 
 	private function db () {
