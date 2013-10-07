@@ -95,7 +95,7 @@ class Build {
 	}
 
 	private function directories () {
-		foreach (['collections', 'config', 'css', 'forms', 'js', 'layouts', 'partials', 'sep', 'images', 'fonts', 'mvc', 'events', 'helpers', 'filters'] as $dir) {
+		foreach (['collections', 'config', 'css', 'forms', 'js', 'layouts', 'partials', 'sep', 'app', 'images', 'fonts', 'mvc', 'events', 'helpers', 'filters'] as $dir) {
 			$dirPath = $this->root . '/' . $dir;
 			if (!file_exists($dirPath)) {
 				mkdir($dirPath);
@@ -142,9 +142,15 @@ class Build {
 			}
 			$filename = $this->root . '/sep/form-' . $form . '.js';
 			if (!file_exists($filename)) {
-				$data = file_get_contents(__DIR__ . '/../../static/form.js');
+				$data = file_get_contents(__DIR__ . '/../../static/sep-form.js');
 				$data = str_replace(['{{$form}}', '{{$url}}'], [$form, $this->url], $data);
 				file_put_contents($filename, $data);	
+			}
+			$filename = $this->root . '/app/form-' . $form . '.js';
+			if (!file_exists($filename)) {
+				$data = file_get_contents(__DIR__ . '/../../static/app-form.json');
+				$data = str_replace(['{{$form}}', '{{$url}}'], [$form, $this->url], $data);
+				file_put_contents($filename, $data);
 			}
 		}
 	}
