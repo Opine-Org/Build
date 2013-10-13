@@ -1,0 +1,48 @@
+parameters:
+
+services:
+    slim:
+        class:     'Slim\Slim'
+    build:
+        class:     'Build\Build'
+        arguments: ['@eventRoute', '@collectionRoute', '@helperRoute', '@configRoute', '@filter', '@cache']
+    event:
+        class:     'Event\Event'
+    separation:
+        class:     'Separation\Separation'
+        arguments: ['{{$root}}', '@handlebars', '@cache']
+    collectionRoute:
+        class:     'Collection\CollectionRoute'
+        arguments: ['@slim', '@db', '@separation']
+    formRoute:
+        class:     'Form\FormRoute'
+        arguments: ['@slim', '@formModel', '@separation']
+    formModel:     
+        class:     'Form\FormModel'
+        arguments: ['@db']
+    eventRoute:
+        class:     'Event\EventRoute'
+        arguments: ['@event']
+    helperRoute:
+        class:     'Helper\HelperRoute'
+        arguments: ['@slim', '@handlebars']
+    configRoute:
+        class:     'Config\ConfigRoute'
+        arguments: ['@config', '@cache']
+    filter:
+        class:     'Filter\Filter'
+    cache:
+        class:     'Cache\Cache'
+    imageResizer:
+        class:     'ImageResizer\ImageResizer'
+        arguments: ['@slim']
+    cache:
+        class:     'Cache\Cache'
+    handlebars:
+        class:     'Handlebars\Handlebars'
+    config:
+        class:     'Config\Config'
+        arguments: ['@cache']
+    db:
+        class:     'DB\Mongo'
+        arguments: ['@config']

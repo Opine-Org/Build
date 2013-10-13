@@ -1,22 +1,26 @@
 <?php
 namespace Build;
-use Event\EventRoute;
-use Collection\CollectionRoute;
-use Helper\HelperRoute;
-use Cache\Cache;
-use Config\ConfigRoute;
-use Filter\Filter;
 
 class Build {
 	private $root = false;
 	private $url = false;
-	private $collections = [];
+	private $eventRoute;
+	private $collectionRoute;
+	private $helperRoute;
+	private $configRoute;
+	private $filter;
+	private $cache;
 
-	public static function project ($path, $url='http://json.virtuecenter.com') {
-		new Build($path, $url);
+	public function __construct ($eventRoute, $collectionRoute, $helperRoute, $configRoute, $filter, $cache) {
+		$this->eventRoute = $eventRoute;
+		$this->collectionRoute = $collectionRoute;
+		$this->helperRoute = $helperRoute;
+		$this->configRoute = $configRoute;
+		$this->filter = $filter;
+		$this->cache = $cache;
 	}
 
-	public function __construct ($path, $url) {
+	public function project ($path, $url='http://json.virtuecenter.com') {
 		$this->root = $path;
 		$this->url = $url;
 		
@@ -37,11 +41,11 @@ class Build {
 	}
 
 	private function config () {
-		ConfigRoute::build($this->root);
+		$this->configRoute->build($this->root);
 	}
 
 	private function clearCache () {
-		Cache::deleteBatch([
+		$this->cache->deleteBatch([
 			$this->root . '-collections.json',
 			$this->root . '-filters.json',
 			$this->root . '-helpers.json',
@@ -50,19 +54,19 @@ class Build {
 	}
 
 	private function collections () {
-		Cache::factory()->set($this->root . '-collections.json', CollectionRoute::build($this->root, $this->url, __DIR__), 2, 0);
+		$this->cache->set($this->root . '-collections.json', $this->collectionRoute->build($this->root, $this->url, __DIR__), 2, 0);
 	}
 
 	private function filters () {
-		Cache::factory()->set($this->root . '-filters.json', Filter::build($this->root), 2, 0);
+		$this->cache->set($this->root . '-filters.json', $this->filter->build($this->root), 2, 0);
 	}
 
 	private function helpers () {
-		Cache::factory()->set($this->root . '-helpers.json', HelperRoute::build($this->root), 2, 0);
+		$this->cache->set($this->root . '-helpers.json', $this->helperRoute->build($this->root), 2, 0);
 	}
 
 	private function events () {
-		Cache::factory()->set($this->root . '-events.json', EventRoute::build($this->root), 2, 0);
+		$this->cache->set($this->root . '-events.json', $this->eventRoute->build($this->root), 2, 0);
 	}
 
 	private function db () {
@@ -79,8 +83,6 @@ class Build {
 		@symlink($this->root . '/vendor/virtuecenter/separation/dependencies/jquery.ba-hashchange.js', $this->root . '/js/jquery.ba-hashchange.js');
 		@symlink($this->root . '/vendor/virtuecenter/separation/dependencies/jquery.form.js', $this->root . '/js/jquery.form.js');
 		@symlink($this->root . '/vendor/virtuecenter/separation/dependencies/require.js', $this->root . '/js/require.js');
-		@symlink($this->root . '/vendor/twbs/bootstrap/dist', $this->root . '/bootstrap');
-		@symlink($this->root . '/vendor/twbs/bootstrap/assets/css/docs.css', $this->root . '/css/docs.css');
 
 		//separation builder
 		@symlink($this->root . '/vendor/virtuecenter/build/static/separation-builder.html', $this->root . '/layouts/separation-builder.html');
