@@ -3,27 +3,30 @@ parameters:
 services:
     slim:
         class:     'Slim\Slim'
-        calls:     ['registerAutoloader']
+        calls:
+            - [registerAutoloader, []]
     build:
         class:     'Build\Build'
-        arguments: ['@eventRoute', '@collectionRoute', '@helperRoute', '@configRoute', '@filter', '@cache']
-    event:
-        class:     'Event\Event'
+        arguments: ['@pubSubBuild', '@collectionRoute', '@helperRoute', '@configRoute', '@filter', '@cache']
+    pubSubBuild:
+        class:     'PubSub\PubSubBuild'
+    topic:
+        class:     'PubSub\Topic'
+        arguments: ['@container']
+        calls:
+            - [load, ['%root%']]
     separation:
         class:     'Separation\Separation'
-        arguments: ['{{$root}}', '@handlebars', '@cache']
+        arguments: ['%root%', '@handlebars', '@cache']
     collectionRoute:
         class:     'Collection\CollectionRoute'
-        arguments: ['@slim', '@db', '@separation']
+        arguments: ['@slim', '@db', '@separation', '@topic']
     formRoute:
         class:     'Form\FormRoute'
-        arguments: ['@slim', '@formModel', '@separation']
+        arguments: ['@slim', '@formModel', '@separation', '@topic']
     formModel:     
         class:     'Form\FormModel'
-        arguments: ['@db']
-    eventRoute:
-        class:     'Event\EventRoute'
-        arguments: ['@event']
+        arguments: ['@db', '@topic']
     helperRoute:
         class:     'Helper\HelperRoute'
         arguments: ['@slim', '@handlebars']
@@ -47,3 +50,7 @@ services:
     db:
         class:     'DB\Mongo'
         arguments: ['@config']
+    request:
+        class:     'Form\RequestCurrent'
+    document:
+        class:     'DB\DocumentCurrent'
