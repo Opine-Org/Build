@@ -3,6 +3,7 @@ parameters:
 services:
     slim:
         class:     'Slim\Slim'
+        calls:     ['registerAutoloader']
     build:
         class:     'Build\Build'
         arguments: ['@eventRoute', '@collectionRoute', '@helperRoute', '@configRoute', '@filter', '@cache']

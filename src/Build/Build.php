@@ -4,15 +4,15 @@ namespace Build;
 class Build {
 	private $root = false;
 	private $url = false;
-	private $eventRoute;
+	private $pubSubBuild;
 	private $collectionRoute;
 	private $helperRoute;
 	private $configRoute;
 	private $filter;
 	private $cache;
 
-	public function __construct ($eventRoute, $collectionRoute, $helperRoute, $configRoute, $filter, $cache) {
-		$this->eventRoute = $eventRoute;
+	public function __construct ($pubSubBuild, $collectionRoute, $helperRoute, $configRoute, $filter, $cache) {
+		$this->pubSubBuild = $pubSubBuild;
 		$this->collectionRoute = $collectionRoute;
 		$this->helperRoute = $helperRoute;
 		$this->configRoute = $configRoute;
@@ -33,7 +33,7 @@ class Build {
 		$this->filters();
 		$this->forms();
 		$this->helpers();
-		$this->events();
+		$this->topics();
 		$this->moveStatic();
 		
 		echo 'Built', "\n";
@@ -65,8 +65,8 @@ class Build {
 		$this->cache->set($this->root . '-helpers.json', $this->helperRoute->build($this->root), 2, 0);
 	}
 
-	private function events () {
-		$this->cache->set($this->root . '-events.json', $this->eventRoute->build($this->root), 2, 0);
+	private function topics () {
+		$this->pubSubBuild->build($this->root);
 	}
 
 	private function db () {
@@ -97,7 +97,7 @@ class Build {
 	}
 
 	private function directories () {
-		foreach (['collections', 'config', 'css', 'forms', 'js', 'layouts', 'partials', 'sep', 'app', 'images', 'fonts', 'mvc', 'events', 'helpers', 'filters'] as $dir) {
+		foreach (['collections', 'config', 'css', 'forms', 'js', 'layouts', 'partials', 'sep', 'app', 'images', 'fonts', 'mvc', 'subscribers', 'helpers', 'filters'] as $dir) {
 			$dirPath = $this->root . '/' . $dir;
 			if (!file_exists($dirPath)) {
 				mkdir($dirPath);
