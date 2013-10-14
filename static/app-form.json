@@ -1,9 +1,0 @@
-[
-	{
-		"id": "{{$form}}",
-		"url": "{{$url}}/json-form/{{$form}}",
-		"args": {},
-		"hbs": "form-{{$form}}.hbs",
-		"type": "Form"
-	}
-]

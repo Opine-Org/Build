@@ -1,0 +1,8 @@
+js:
+
+binding:
+    {{$plural}}:
+        url: '{{$url}}/json-data/{{$plural}}/bySlug/:slug'
+        args: []
+        partial: '{{$singular}}.hbs'
+        type: 'Document'

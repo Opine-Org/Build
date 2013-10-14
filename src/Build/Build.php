@@ -148,9 +148,9 @@ class Build {
 				$data = str_replace(['{{$form}}', '{{$url}}'], [$form, $this->url], $data);
 				file_put_contents($filename, $data);	
 			}
-			$filename = $this->root . '/app/form-' . $form . '.js';
+			$filename = $this->root . '/app/form-' . $form . '.yml';
 			if (!file_exists($filename)) {
-				$data = file_get_contents(__DIR__ . '/../../static/app-form.json');
+				$data = file_get_contents(__DIR__ . '/../../static/app-form.yml');
 				$data = str_replace(['{{$form}}', '{{$url}}'], [$form, $this->url], $data);
 				file_put_contents($filename, $data);
 			}

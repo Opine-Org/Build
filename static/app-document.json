@@ -1,9 +1,0 @@
-[
-	{
-		"id": "{{$plural}}",
-		"url": "{{$url}}/json-data/{{$plural}}/bySlug/:slug",
-		"args": {},
-		"hbs": "{{$singular}}.hbs",
-		"type": "Document"
-	}
-]
