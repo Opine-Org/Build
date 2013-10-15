@@ -1,8 +1,8 @@
 js:
 
 binding:
-	{{$form}}:
-		url: '{{$url}}/json-form/{{$form}}',
-	    args: [],
-		partial: 'form-{{$form}}.hbs',
-		type: "Form"
+    {{$form}}:
+        url: '{{$url}}/json-form/{{$form}}'
+        args: []
+        partial: 'form-{{$form}}.hbs'
+        type: "Form"
