@@ -20,13 +20,18 @@ services:
         arguments: ['%root%', '@handlebars', '@cache']
     collectionRoute:
         class:     'Collection\CollectionRoute'
-        arguments: ['@slim', '@db', '@separation', '@topic']
+        arguments: ['@slim', '@db', '@separation', '@response']
+    field:
+        class:     'Field\Field'
+        arguments: ['@db', '@captcha']
+    captcha:
+        class:     'Captcha\Captcha'
     formRoute:
         class:     'Form\FormRoute'
-        arguments: ['@slim', '@formModel', '@separation', '@topic']
-    formModel:     
-        class:     'Form\FormModel'
-        arguments: ['@db', '@topic']
+        arguments: ['@slim', '@form', '@post', '@separation', '@topic', '@response']
+    form:
+        class:     'Form\Form'
+        arguments: ['%root%', '@field', '@post', '@db', '@response']
     helperRoute:
         class:     'Helper\HelperRoute'
         arguments: ['@slim', '@handlebars']
@@ -35,6 +40,7 @@ services:
         arguments: ['@config', '@cache']
     filter:
         class:     'Filter\Filter'
+        arguments: ['@response']
     cache:
         class:     'Cache\Cache'
     imageResizer:
@@ -50,7 +56,7 @@ services:
     db:
         class:     'DB\Mongo'
         arguments: ['@config']
-    request:
-        class:     'Form\RequestCurrent'
-    document:
-        class:     'DB\DocumentCurrent'
+    post:
+        class:     'HTTP\Post'
+    response:
+        class:     'HTTP\Response'
