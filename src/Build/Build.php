@@ -83,10 +83,8 @@ class Build {
 		@symlink($this->root . '/vendor/virtuecenter/separation/dependencies/jquery.ba-hashchange.js', $this->root . '/js/jquery.ba-hashchange.js');
 		@symlink($this->root . '/vendor/virtuecenter/separation/dependencies/jquery.form.js', $this->root . '/js/jquery.form.js');
 		@symlink($this->root . '/vendor/virtuecenter/separation/dependencies/require.js', $this->root . '/js/require.js');
-
-		//separation builder
-		@symlink($this->root . '/vendor/virtuecenter/build/static/separation-builder.html', $this->root . '/layouts/separation-builder.html');
-		@symlink($this->root . '/vendor/virtuecenter/build/static/separation-builder.js', $this->root . '/js/separation-builder.js');
+		@symlink($this->root . '/vendor/virtuecenter/form/js/formXHR.js', $this->root . '/js/formXHR.js');
+		@symlink($this->root . '/vendor/virtuecenter/form/js/formHelperSemantic.js', $this->root . '/js/formHelperSemantic.js');
 	}
 
 	private function route () {
