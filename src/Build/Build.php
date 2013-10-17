@@ -70,7 +70,7 @@ class Build {
 	}
 
 	private function db () {
-		$dbPath = $this->root . '/config/db.php';
+		$dbPath = $this->root . '/../config/db.php';
 		if (!file_exists($dbPath)) {
 			file_put_contents($dbPath, file_get_contents(__DIR__ . '/../../static/db.php'));
 		}
@@ -88,15 +88,22 @@ class Build {
 	}
 
 	private function route () {
-		$routePath = $this->root . '/Route.php';
+		$routePath = $this->root . '/../Route.php';
 		if (!file_exists($routePath)) {
 			file_put_contents($routePath, file_get_contents(__DIR__ . '/../../static/Route.php'));
 		}
 	}
 
 	private function directories () {
-		foreach (['collections', 'config', 'css', 'forms', 'js', 'layouts', 'partials', 'sep', 'app', 'images', 'fonts', 'mvc', 'subscribers', 'helpers', 'filters'] as $dir) {
+		foreach (['css', 'js', 'layouts', 'partials', 'images', 'fonts', 'helpers'] as $dir) {
 			$dirPath = $this->root . '/' . $dir;
+			if (!file_exists($dirPath)) {
+				mkdir($dirPath);
+			}
+		}
+
+		foreach (['collections', 'config', 'forms', 'app', 'mvc', 'subscribers', 'filters'] as $dir) {
+			$dirPath = $this->root . '/../' . $dir;
 			if (!file_exists($dirPath)) {
 				mkdir($dirPath);
 			}
@@ -105,12 +112,12 @@ class Build {
 
 	private function forms () {
 		$this->forms = [];
-		$dirFiles = glob($this->root . '/forms/*.php');
+		$dirFiles = glob($this->root . '/../forms/*.php');
 		foreach ($dirFiles as $form) {
 			$class = basename($form, '.php');
 			$this->forms[] = $class;
 		}
-		file_put_contents($this->root . '/forms/cache.json', json_encode($this->forms, JSON_PRETTY_PRINT));
+		file_put_contents($this->root . '/../forms/cache.json', json_encode($this->forms, JSON_PRETTY_PRINT));
 		
 		foreach ($this->forms as $form) {
 			$filename = $this->root . '/layouts/form-' . $form . '.html';
@@ -122,7 +129,7 @@ class Build {
 			$filename = $this->root . '/partials/form-' . $form . '.hbs';
 			if (!file_exists($filename)) {
 				$data = file_get_contents(__DIR__ . '/../../static/form.hbs');
-				require $this->root . '/forms/' . $form . '.php';
+				require $this->root . '/../forms/' . $form . '.php';
 				$obj = new $form();
 				ob_start();
 				foreach ($obj->fields as $field) {
@@ -140,13 +147,15 @@ class Build {
 				$data = str_replace(['{{$form}}', '{{$generated}}'], [$form, $generated], $data);
 				file_put_contents($filename, $data);
 			}
+/*
 			$filename = $this->root . '/sep/form-' . $form . '.js';
 			if (!file_exists($filename)) {
 				$data = file_get_contents(__DIR__ . '/../../static/sep-form.js');
 				$data = str_replace(['{{$form}}', '{{$url}}'], [$form, $this->url], $data);
 				file_put_contents($filename, $data);	
 			}
-			$filename = $this->root . '/app/form-' . $form . '.yml';
+*/
+			$filename = $this->root . '/../app/form-' . $form . '.yml';
 			if (!file_exists($filename)) {
 				$data = file_get_contents(__DIR__ . '/../../static/app-form.yml');
 				$data = str_replace(['{{$form}}', '{{$url}}'], [$form, $this->url], $data);
