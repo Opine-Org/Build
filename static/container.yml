@@ -32,6 +32,15 @@ services:
     form:
         class:     'Form\Form'
         arguments: ['%root%', '@field', '@post', '@db', '@response']
+    managerRoute:
+        class:     'Manager\ManagerRoute'
+        arguments: ['@authentication', '@separation', '@slim', '@form', '@manager']
+    manager:
+        class:     'Manager\Manager'
+        arguments: []
+    authentication:
+        class:     'Authentication\Authentication'
+        arguments: ['@db', '@separation', '@response']
     helperRoute:
         class:     'Helper\HelperRoute'
         arguments: ['@slim', '@handlebars']
@@ -60,3 +69,6 @@ services:
         class:     'HTTP\Post'
     response:
         class:     'HTTP\Response'
+    person:
+        class:     'Person\Person'
+        arguments: ['@db']
