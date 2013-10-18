@@ -17,7 +17,7 @@ services:
             - [load, ['%root%']]
     separation:
         class:     'Separation\Separation'
-        arguments: ['%root%', '@handlebars', '@cache']
+        arguments: ['%root%', '@handlebars', '@cache', '@config']
     collectionRoute:
         class:     'Collection\CollectionRoute'
         arguments: ['@slim', '@db', '@separation', '@response']
@@ -61,7 +61,7 @@ services:
         class:     'Handlebars\Handlebars'
     config:
         class:     'Config\Config'
-        arguments: ['@cache']
+        arguments: ['%root%', '@cache']
     db:
         class:     'DB\Mongo'
         arguments: ['@config']

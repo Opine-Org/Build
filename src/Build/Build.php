@@ -77,14 +77,14 @@ class Build {
 	}
 
 	private function moveStatic () {
-		@symlink($this->root . '/vendor/virtuecenter/separation/dependencies/jquery.min.js', $this->root . '/js/jquery.min.js');
-		@symlink($this->root . '/vendor/virtuecenter/separation/dependencies/handlebars.min.js', $this->root . '/js/handlebars.min.js');
-		@symlink($this->root . '/vendor/virtuecenter/separation/jquery.separation.js', $this->root . '/js/jquery.separation.js');
-		@symlink($this->root . '/vendor/virtuecenter/separation/dependencies/jquery.ba-hashchange.js', $this->root . '/js/jquery.ba-hashchange.js');
-		@symlink($this->root . '/vendor/virtuecenter/separation/dependencies/jquery.form.js', $this->root . '/js/jquery.form.js');
-		@symlink($this->root . '/vendor/virtuecenter/separation/dependencies/require.js', $this->root . '/js/require.js');
-		@symlink($this->root . '/vendor/virtuecenter/form/js/formXHR.js', $this->root . '/js/formXHR.js');
-		@symlink($this->root . '/vendor/virtuecenter/form/js/formHelperSemantic.js', $this->root . '/js/formHelperSemantic.js');
+		@symlink($this->root . '/../vendor/virtuecenter/separation/dependencies/jquery.min.js', $this->root . '/js/jquery.min.js');
+		@symlink($this->root . '/../vendor/virtuecenter/separation/dependencies/handlebars.min.js', $this->root . '/js/handlebars.min.js');
+		@symlink($this->root . '/../vendor/virtuecenter/separation/jquery.separation.js', $this->root . '/js/jquery.separation.js');
+		@symlink($this->root . '/../vendor/virtuecenter/separation/dependencies/jquery.ba-hashchange.js', $this->root . '/js/jquery.ba-hashchange.js');
+		@symlink($this->root . '/../vendor/virtuecenter/separation/dependencies/jquery.form.js', $this->root . '/js/jquery.form.js');
+		@symlink($this->root . '/../vendor/virtuecenter/separation/dependencies/require.js', $this->root . '/js/require.js');
+		@symlink($this->root . '/../vendor/virtuecenter/form/js/formXHR.js', $this->root . '/js/formXHR.js');
+		@symlink($this->root . '/../vendor/virtuecenter/form/js/formHelperSemantic.js', $this->root . '/js/formHelperSemantic.js');
 	}
 
 	private function route () {
@@ -102,7 +102,7 @@ class Build {
 			}
 		}
 
-		foreach (['collections', 'config', 'forms', 'app', 'mvc', 'subscribers', 'filters'] as $dir) {
+		foreach (['collections', 'config', 'forms', 'app', 'mvc', 'subscribers', 'filters', 'bundles'] as $dir) {
 			$dirPath = $this->root . '/../' . $dir;
 			if (!file_exists($dirPath)) {
 				mkdir($dirPath);
