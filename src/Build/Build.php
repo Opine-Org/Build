@@ -20,7 +20,7 @@ class Build {
 		$this->cache = $cache;
 	}
 
-	public function project ($path, $url='http://json.virtuecenter.com') {
+	public function project ($path, $url='%dataAPI%') {
 		$this->root = $path;
 		$this->url = $url;
 		
@@ -54,7 +54,7 @@ class Build {
 	}
 
 	private function collections () {
-		$this->cache->set($this->root . '-collections.json', $this->collectionRoute->build($this->root, $this->url, __DIR__), 2, 0);
+		$this->cache->set($this->root . '-collections.json', $this->collectionRoute->build($this->root, $this->url), 2, 0);
 	}
 
 	private function filters () {
