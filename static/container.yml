@@ -40,7 +40,7 @@ services:
         arguments: []
     authentication:
         class:     'Authentication\Authentication'
-        arguments: ['@db', '@separation', '@response']
+        arguments: ['@db', '@config','@separation', '@response']
     helperRoute:
         class:     'Helper\HelperRoute'
         arguments: ['@slim', '@handlebars']
@@ -72,3 +72,12 @@ services:
     person:
         class:     'Person\Person'
         arguments: ['@db']
+    errors:
+        class:     'Errors\Errors'
+        arguments: ['@config', '@topic', '@separation']
+    mail:
+        class:     'Mail\Mail'
+        arguments: ['@mailSES', '@config', '@errors']
+    mailSES:
+        class:     'Mail\SES'
+        arguments: ['@config']
