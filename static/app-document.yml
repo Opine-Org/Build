@@ -1,8 +1,8 @@
 js:
 
 binding:
-    {{$plural}}:
+    {{$singular}}:
         url: '{{$url}}/json-data/{{$plural}}/bySlug/:slug'
         args: []
-        partial: '{{$singular}}.hbs'
+        partial: 'documents/{{$singular}}.hbs'
         type: 'Document'

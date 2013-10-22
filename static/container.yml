@@ -7,17 +7,17 @@ services:
             - [registerAutoloader, []]
     build:
         class:     'Build\Build'
-        arguments: ['@pubSubBuild', '@collectionRoute', '@helperRoute', '@configRoute', '@filter', '@cache']
+        arguments: ['@pubSubBuild', '@collectionRoute', '@helperRoute', '@formRoute', '@configRoute', '@filter', '@cache']
     pubSubBuild:
         class:     'PubSub\PubSubBuild'
     topic:
         class:     'PubSub\Topic'
-        arguments: ['@container']
+        arguments: ['@container', '@yamlSlow']
         calls:
             - [load, ['%root%']]
     separation:
         class:     'Separation\Separation'
-        arguments: ['%root%', '@handlebars', '@cache', '@config']
+        arguments: ['%root%', '@handlebars', '@cache', '@config', '@yamlSlow']
     collectionRoute:
         class:     'Collection\CollectionRoute'
         arguments: ['@slim', '@db', '@separation', '@response']
@@ -28,7 +28,7 @@ services:
         class:     'Captcha\Captcha'
     formRoute:
         class:     'Form\FormRoute'
-        arguments: ['@slim', '@form', '@post', '@separation', '@topic', '@response']
+        arguments: ['@slim', '@form', '@field', '@post', '@separation', '@topic', '@response']
     form:
         class:     'Form\Form'
         arguments: ['%root%', '@field', '@post', '@db', '@response']
@@ -52,9 +52,10 @@ services:
         arguments: ['@response']
     cache:
         class:     'Cache\Cache'
-    imageResizer:
-        class:     'ImageResizer\ImageResizer'
-        arguments: ['@slim']
+    muneeDispatcher:
+        class:     'Munee\Dispatcher'
+    muneeRequest:
+        class:     'Munee\Request'
     cache:
         class:     'Cache\Cache'
     handlebars:
@@ -77,7 +78,9 @@ services:
         arguments: ['@config', '@topic', '@separation']
     mail:
         class:     'Mail\Mail'
-        arguments: ['@mailSES', '@config', '@errors']
+        arguments: ['@mailSES']
     mailSES:
         class:     'Mail\SES'
         arguments: ['@config']
+    yamlSlow:
+        class:     'Symfony\Component\Yaml\Yaml'

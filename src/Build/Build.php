@@ -31,14 +31,16 @@ class Build {
 	private $collectionRoute;
 	private $helperRoute;
 	private $configRoute;
+	private $formRoute;
 	private $filter;
 	private $cache;
 
-	public function __construct ($pubSubBuild, $collectionRoute, $helperRoute, $configRoute, $filter, $cache) {
+	public function __construct ($pubSubBuild, $collectionRoute, $helperRoute, $formRoute, $configRoute, $filter, $cache) {
 		$this->pubSubBuild = $pubSubBuild;
 		$this->collectionRoute = $collectionRoute;
 		$this->helperRoute = $helperRoute;
 		$this->configRoute = $configRoute;
+		$this->formRoute = $formRoute;
 		$this->filter = $filter;
 		$this->cache = $cache;
 	}
@@ -72,12 +74,17 @@ class Build {
 			$this->root . '-collections.json',
 			$this->root . '-filters.json',
 			$this->root . '-helpers.json',
-			$this->root . '-events.json'
+			$this->root . '-events.json',
+			$this->root . '-forms.json'
 		]);
 	}
 
 	private function collections () {
 		$this->cache->set($this->root . '-collections.json', $this->collectionRoute->build($this->root, $this->url), 2, 0);
+	}
+
+	private function forms () {
+		$this->cache->set($this->root . '-forms.json', $this->formRoute->build($this->root, $this->url), 2, 0);
 	}
 
 	private function filters () {
@@ -100,12 +107,12 @@ class Build {
 	}
 
 	private function moveStatic () {
+		//@symlink($this->root . '/../vendor/virtuecenter/separation/dependencies/handlebars.min.js', $this->root . '/js/handlebars.min.js');
+		//@symlink($this->root . '/../vendor/virtuecenter/separation/jquery.separation.js', $this->root . '/js/jquery.separation.js');
+		//@symlink($this->root . '/../vendor/virtuecenter/separation/dependencies/jquery.ba-hashchange.js', $this->root . '/js/jquery.ba-hashchange.js');
+		//@symlink($this->root . '/../vendor/virtuecenter/separation/dependencies/require.js', $this->root . '/js/require.js');
 		@symlink($this->root . '/../vendor/virtuecenter/separation/dependencies/jquery.min.js', $this->root . '/js/jquery.min.js');
-		@symlink($this->root . '/../vendor/virtuecenter/separation/dependencies/handlebars.min.js', $this->root . '/js/handlebars.min.js');
-		@symlink($this->root . '/../vendor/virtuecenter/separation/jquery.separation.js', $this->root . '/js/jquery.separation.js');
-		@symlink($this->root . '/../vendor/virtuecenter/separation/dependencies/jquery.ba-hashchange.js', $this->root . '/js/jquery.ba-hashchange.js');
 		@symlink($this->root . '/../vendor/virtuecenter/separation/dependencies/jquery.form.js', $this->root . '/js/jquery.form.js');
-		@symlink($this->root . '/../vendor/virtuecenter/separation/dependencies/require.js', $this->root . '/js/require.js');
 		@symlink($this->root . '/../vendor/virtuecenter/form/js/formXHR.js', $this->root . '/js/formXHR.js');
 		@symlink($this->root . '/../vendor/virtuecenter/form/js/formHelperSemantic.js', $this->root . '/js/formHelperSemantic.js');
 	}
@@ -124,65 +131,24 @@ class Build {
 				mkdir($dirPath);
 			}
 		}
-
 		foreach (['collections', 'config', 'forms', 'app', 'mvc', 'subscribers', 'filters', 'bundles'] as $dir) {
 			$dirPath = $this->root . '/../' . $dir;
 			if (!file_exists($dirPath)) {
 				mkdir($dirPath);
 			}
 		}
-	}
-
-	private function forms () {
-		$this->forms = [];
-		$dirFiles = glob($this->root . '/../forms/*.php');
-		foreach ($dirFiles as $form) {
-			$class = basename($form, '.php');
-			$this->forms[] = $class;
-		}
-		file_put_contents($this->root . '/../forms/cache.json', json_encode($this->forms, JSON_PRETTY_PRINT));
-		
-		foreach ($this->forms as $form) {
-			$filename = $this->root . '/layouts/form-' . $form . '.html';
-			if (!file_exists($filename)) {
-				$data = file_get_contents(__DIR__ . '/../../static/form.html');
-				$data = str_replace(['{{$form}}'], [$form], $data);
-				file_put_contents($filename, $data);
+		foreach (['collections', 'documents', 'forms'] as $dir) {
+			$dirPath = $this->root . '/layouts/' . $dir;
+			if (!file_exists($dirPath)) {
+				mkdir($dirPath);
 			}
-			$filename = $this->root . '/partials/form-' . $form . '.hbs';
-			if (!file_exists($filename)) {
-				$data = file_get_contents(__DIR__ . '/../../static/form.hbs');
-				require $this->root . '/../forms/' . $form . '.php';
-				$obj = new $form();
-				ob_start();
-				foreach ($obj->fields as $field) {
-					echo '
-	<div class="form-group">
-		<label for="' . $field['name'] . '" class="col-lg-2 control-label">' . ucwords(str_replace('_', ' ', $field['name'])) . '</label>
-		<div class="col-lg-10">
-			{{{' . $field['name'] . '}}}
-		</div>
-	</div>';
-				}
-				echo '
-	<input type="submit" />';
-				$generated = ob_get_clean();
-				$data = str_replace(['{{$form}}', '{{$generated}}'], [$form, $generated], $data);
-				file_put_contents($filename, $data);
+			$dirPath = $this->root . '/partials/' . $dir;
+			if (!file_exists($dirPath)) {
+				mkdir($dirPath);
 			}
-/*
-			$filename = $this->root . '/sep/form-' . $form . '.js';
-			if (!file_exists($filename)) {
-				$data = file_get_contents(__DIR__ . '/../../static/sep-form.js');
-				$data = str_replace(['{{$form}}', '{{$url}}'], [$form, $this->url], $data);
-				file_put_contents($filename, $data);	
-			}
-*/
-			$filename = $this->root . '/../app/form-' . $form . '.yml';
-			if (!file_exists($filename)) {
-				$data = file_get_contents(__DIR__ . '/../../static/app-form.yml');
-				$data = str_replace(['{{$form}}', '{{$url}}'], [$form, $this->url], $data);
-				file_put_contents($filename, $data);
+			$dirPath = $this->root . '/../app/' . $dir;
+			if (!file_exists($dirPath)) {
+				mkdir($dirPath);
 			}
 		}
 	}
