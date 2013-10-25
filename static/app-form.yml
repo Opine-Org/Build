@@ -4,5 +4,5 @@ binding:
     {{$form}}:
         url: '{{$url}}/json-form/{{$form}}'
         args: []
-        partial: 'forms/form-{{$form}}.hbs'
+        partial: 'forms/{{$form}}.hbs'
         type: 'Form'
