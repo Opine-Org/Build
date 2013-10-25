@@ -66,7 +66,7 @@ class Build {
 		exit;
 	}
 
-	private environmentCheck () {
+	private function environmentCheck () {
 		if (class_exists('\MongoClient')) {
 			echo 'Good: MongoDB client driver is installed.', "\n\n";
 		} else {
