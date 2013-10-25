@@ -67,18 +67,57 @@ class Build {
 	}
 
 	private function environmentCheck () {
+		//mongo
 		if (class_exists('\MongoClient')) {
 			echo 'Good: MongoDB client driver is installed.', "\n\n";
 		} else {
 			echo 'Problem: MongoDB client driver not installed.', "\n\n";
 		}
+		if (file_exists($this->root . '/../config/db.php')) {
+			echo 'Good: Database config file exists.', "\n\n";
+			$db = require $this->root . '/../config/db.php';
+			try {
+				$client = new \MongoClient($db['conn']);
+				$collections = $client->{$db['name']}->getCollectionNames();
+				echo 'Good: can connect to database.', "\n\n";
+			} catch (\Exception $e) {
+				echo 'Problem: can not connect to database: ', $e->getMessage(), "\n\n";
+			}
+		} else {
+			echo 'Problem: Database config file does not exists.', "\n\n";
+		}
+
+		//memcache
 		if (class_exists('\Memcache')) {
 			echo 'Good: Memcache client driver is installed.', "\n\n";
+			$memcache = new \Memcache();
+			try {
+				$result = @$memcache->pconnect('localhost', 11211);
+				if ($result !== false) {
+					echo 'Good: Memcache connection made.', "\n\n";
+				} else {
+					echo 'Problem: Memcache connection failed.', "\n\n";
+				}
+			} catch (\Exception $e) {
+				echo 'Problem: Memcache: ', $e->getMessage(), "\n\n";
+			}
 		} else {
 			echo 'Problem: Memcache client driver is not installed.', "\n\n";
 		}
+
+		//beanstalkd
 		if (class_exists('\Pheanstalk_Pheanstalk')) {
-			echo 'Good: Pheanstalk client driver is installed.', "\n\n";
+			echo 'Good: Queue client driver is installed.', "\n\n";
+			$queue = new \Pheanstalk_Pheanstalk('127.0.0.1');
+        	try {
+            	if ($queue->getConnection()->isServiceListening() != true) {
+       				echo 'Problem: Queue connetion not made.', "\n\n";
+       			} else {
+       				echo 'Good: Queue connetion made.', "\n\n";
+       			}
+       		} catch (\Exception $e) {
+       			echo 'Problem: Queue: ', $e->getMessage(), "\n\n";
+       		}
 		} else {
 			echo 'Problem: Pheanstalkd client driver is not installed.', "\n\n";
 		}
