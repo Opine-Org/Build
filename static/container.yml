@@ -1,5 +1,5 @@
 imports:
-    - ../vendor/virtuecenter/framework/container.yml
+    - vendor/virtuecenter/framework/container.yml
 
 parameters:
 
