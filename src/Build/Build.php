@@ -60,9 +60,28 @@ class Build {
 		$this->helpers();
 		$this->topics();
 		$this->moveStatic();
+		$this->environmentCheck();
 		
 		echo 'Built', "\n";
 		exit;
+	}
+
+	private environmentCheck () {
+		if (class_exists('\MongoClient')) {
+			echo 'Good: MongoDB client driver is installed.', "\n\n";
+		} else {
+			echo 'Problem: MongoDB client driver not installed.', "\n\n";
+		}
+		if (class_exists('\Memcache')) {
+			echo 'Good: Memcache client driver is installed.', "\n\n";
+		} else {
+			echo 'Problem: Memcache client driver is not installed.', "\n\n";
+		}
+		if (class_exists('\Pheanstalk_Pheanstalk')) {
+			echo 'Good: Pheanstalk client driver is installed.', "\n\n";
+		} else {
+			echo 'Problem: Pheanstalkd client driver is not installed.', "\n\n";
+		}
 	}
 
 	private function config () {
