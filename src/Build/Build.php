@@ -68,7 +68,7 @@ class Build {
 
 	private function environmentCheck () {
 		//mongo
-		if (class_exists('\MongoClient')) {
+		if (class_exists('\MongoClient', false)) {
 			echo 'Good: MongoDB client driver is installed.', "\n\n";
 		} else {
 			echo 'Problem: MongoDB client driver not installed.', "\n\n";
@@ -88,7 +88,7 @@ class Build {
 		}
 
 		//memcache
-		if (class_exists('\Memcache')) {
+		if (class_exists('\Memcache', false)) {
 			echo 'Good: Memcache client driver is installed.', "\n\n";
 			$memcache = new \Memcache();
 			try {
