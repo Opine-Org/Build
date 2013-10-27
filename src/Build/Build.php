@@ -1,4 +1,4 @@
-<?php
+b <?php
 /**
  * virtuecenter\build
  *
@@ -34,13 +34,15 @@ class Build {
 	private $formRoute;
 	private $filter;
 	private $cache;
+	private $bundleRoute;
 
-	public function __construct ($pubSubBuild, $collectionRoute, $helperRoute, $formRoute, $configRoute, $filter, $cache) {
+	public function __construct ($pubSubBuild, $collectionRoute, $helperRoute, $formRoute, $configRoute, $bundleRoute, $filter, $cache) {
 		$this->pubSubBuild = $pubSubBuild;
 		$this->collectionRoute = $collectionRoute;
 		$this->helperRoute = $helperRoute;
 		$this->configRoute = $configRoute;
 		$this->formRoute = $formRoute;
+		$this->bundleRoute = $bundleRoute;
 		$this->filter = $filter;
 		$this->cache = $cache;
 	}
@@ -61,7 +63,7 @@ class Build {
 		$this->topics();
 		$this->moveStatic();
 		$this->environmentCheck();
-		
+		$this->bundleRoute->build();
 		echo 'Built', "\n";
 		exit;
 	}
