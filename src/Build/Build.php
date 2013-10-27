@@ -1,4 +1,4 @@
-b <?php
+<?php
 /**
  * virtuecenter\build
  *
@@ -50,7 +50,6 @@ class Build {
 	public function project ($path, $url='%dataAPI%') {
 		$this->root = $path;
 		$this->url = $url;
-		
 		$this->clearCache();
 		$this->config();
 		$this->directories();
@@ -63,7 +62,7 @@ class Build {
 		$this->topics();
 		$this->moveStatic();
 		$this->environmentCheck();
-		$this->bundleRoute->build();
+		$this->bundleRoute->build($path);
 		echo 'Built', "\n";
 		exit;
 	}
