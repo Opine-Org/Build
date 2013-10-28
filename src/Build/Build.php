@@ -62,7 +62,7 @@ class Build {
 		$this->topics();
 		$this->moveStatic();
 		$this->environmentCheck();
-		$this->bundleRoute->build($path);
+		$this->bundles();
 		echo 'Built', "\n";
 		exit;
 	}
@@ -136,6 +136,10 @@ class Build {
 			$this->root . '-events.json',
 			$this->root . '-forms.json'
 		]);
+	}
+
+	private function bundles () {
+		$this->cache->set($this->root . '-bundles.json', $this->bundleRoute->build($this->root));
 	}
 
 	private function collections () {
