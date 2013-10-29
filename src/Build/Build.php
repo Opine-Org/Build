@@ -51,6 +51,7 @@ class Build {
 		$this->root = $path;
 		$this->url = $url;
 		$this->clearCache();
+		$this->salt();
 		$this->config();
 		$this->directories();
 		$this->db();
@@ -63,6 +64,7 @@ class Build {
 		$this->topics();
 		$this->moveStatic();
 		$this->environmentCheck();
+		$this->adminUserFirst();
 		echo 'Built', "\n";
 		exit;
 	}
@@ -136,6 +138,45 @@ class Build {
 			$this->root . '-events.json',
 			$this->root . '-forms.json'
 		]);
+	}
+
+	private function salt () {
+		$authConfigFile = $this->root . '/../config/auth.php';
+		if (file_exists($authConfigFile)) {
+			echo 'Good: Authentication salt file already exists.', "\n\n";
+			return;
+		}
+		file_put_contents($authConfigFile, '<?php
+return [
+	"salt" => "' . uniqid() . uniqid() . uniqid() . '"
+];');
+	}
+
+	private function adminUserFirst () {
+		$auth = require $this->root . '/../config/auth.php';
+		if (!isset($auth['salt'])) {
+			echo 'Problem: No Salt set in auth config file';
+		}
+		$config = require $this->root . '/../config/db.php';
+		$client = new \MongoClient($config['conn']);
+		$db = new \MongoDB($client, $config['name']);
+		$users = new \MongoCollection($db, 'users');
+		$found = $users->findOne(['acl.zone' => 'Manager'], ['_id', 'acl']);
+		if (isset($found['_id'])) {
+			echo 'Good: Superadmin already exists.', "\n\n";
+			return;
+		}
+		$users->save([
+			'first_name' => 'Admin',
+			'last_name' => 'Admin',
+			'email' => 'admin@website.com',
+			'acl' => [
+				['zone' => 'Manager', 'acl' => ['superadmin']]
+			],
+			'password' => sha1($auth['salt'] . 'password'),
+			'created_date' => new \MongoDate(strtotime('now'))
+		]);
+		echo 'Good: Superuser created. admin@website.com : password', "\n\n";
 	}
 
 	private function bundles () {
