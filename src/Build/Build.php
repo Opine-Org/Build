@@ -59,10 +59,10 @@ class Build {
 		$this->filters();
 		$this->forms();
 		$this->helpers();
+		$this->bundles();
 		$this->topics();
 		$this->moveStatic();
 		$this->environmentCheck();
-		$this->bundles();
 		echo 'Built', "\n";
 		exit;
 	}
@@ -159,7 +159,7 @@ class Build {
 	}
 
 	private function topics () {
-		$this->pubSubBuild->build($this->root);
+		$this->cache->set($this->root . '-topics.json', json_encode($this->pubSubBuild->build($this->root)), 2, 0);
 	}
 
 	private function db () {
@@ -170,10 +170,6 @@ class Build {
 	}
 
 	private function moveStatic () {
-		//@symlink($this->root . '/../vendor/virtuecenter/separation/dependencies/handlebars.min.js', $this->root . '/js/handlebars.min.js');
-		//@symlink($this->root . '/../vendor/virtuecenter/separation/jquery.separation.js', $this->root . '/js/jquery.separation.js');
-		//@symlink($this->root . '/../vendor/virtuecenter/separation/dependencies/jquery.ba-hashchange.js', $this->root . '/js/jquery.ba-hashchange.js');
-		//@symlink($this->root . '/../vendor/virtuecenter/separation/dependencies/require.js', $this->root . '/js/require.js');
 		@symlink($this->root . '/../vendor/virtuecenter/separation/dependencies/jquery.min.js', $this->root . '/js/jquery.min.js');
 		@symlink($this->root . '/../vendor/virtuecenter/separation/dependencies/jquery.form.js', $this->root . '/js/jquery.form.js');
 		@symlink($this->root . '/../vendor/virtuecenter/form/js/formXHR.js', $this->root . '/js/formXHR.js');
