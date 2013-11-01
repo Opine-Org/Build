@@ -211,10 +211,10 @@ return [
 	}
 
 	private function moveStatic () {
-		@symlink($this->root . '/../vendor/virtuecenter/separation/dependencies/jquery.min.js', $this->root . '/js/jquery.min.js');
-		@symlink($this->root . '/../vendor/virtuecenter/separation/dependencies/jquery.form.js', $this->root . '/js/jquery.form.js');
-		@symlink($this->root . '/../vendor/virtuecenter/form/js/formXHR.js', $this->root . '/js/formXHR.js');
-		@symlink($this->root . '/../vendor/virtuecenter/form/js/formHelperSemantic.js', $this->root . '/js/formHelperSemantic.js');
+		@copy($this->root . '/../vendor/virtuecenter/separation/dependencies/jquery.min.js', $this->root . '/js/jquery.min.js');
+		@copy($this->root . '/../vendor/virtuecenter/separation/dependencies/jquery.form.js', $this->root . '/js/jquery.form.js');
+		@copy($this->root . '/../vendor/virtuecenter/form/js/formXHR.js', $this->root . '/js/formXHR.js');
+		@copy($this->root . '/../vendor/virtuecenter/form/js/formHelperSemantic.js', $this->root . '/js/formHelperSemantic.js');
 	}
 
 	private function route () {
