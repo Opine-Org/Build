@@ -35,8 +35,9 @@ class Build {
 	private $filter;
 	private $cache;
 	private $bundleRoute;
+	private $search;
 
-	public function __construct ($pubSubBuild, $collectionRoute, $helperRoute, $formRoute, $configRoute, $bundleRoute, $filter, $cache) {
+	public function __construct ($pubSubBuild, $collectionRoute, $helperRoute, $formRoute, $configRoute, $bundleRoute, $filter, $cache, $search) {
 		$this->pubSubBuild = $pubSubBuild;
 		$this->collectionRoute = $collectionRoute;
 		$this->helperRoute = $helperRoute;
@@ -45,11 +46,13 @@ class Build {
 		$this->bundleRoute = $bundleRoute;
 		$this->filter = $filter;
 		$this->cache = $cache;
+		$this->search = $search;
 	}
 
 	public function project ($path, $url='%dataAPI%') {
 		$this->root = $path;
 		$this->url = $url;
+		$this->search->indexCreateDefault();
 		$this->clearCache();
 		$this->salt();
 		$this->config();
