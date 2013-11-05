@@ -6,4 +6,3 @@ binding:
         args: []
         partial: 'collections/{{$plural}}.hbs'
         type: 'Collection'
-        cache: 600
