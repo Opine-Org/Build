@@ -49,8 +49,14 @@ class Build {
 		$this->search = $search;
 	}
 
-	public function project ($path, $url='%dataAPI%') {
-		$this->root = $path;
+	public function upgrade ($root) {
+		$this->collectionRoute->upgrade($root);
+		$this->formRoute->upgrade($root);
+		$this->bundleRoute->upgrade($root);
+	}
+
+	public function project ($root, $url='%dataAPI%') {
+		$this->root = $root;
 		$this->url = $url;
 		$this->search->indexCreateDefault();
 		$this->clearCache();
