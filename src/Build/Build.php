@@ -72,66 +72,72 @@ class Build {
 		$this->bundles();
 		$this->topics();
 		$this->moveStatic();
-		$this->environmentCheck();
 		$this->adminUserFirst();
 		echo 'Built', "\n";
 		exit;
 	}
 
-	private function environmentCheck () {
+	public function environmentCheck ($root) {
+		$this->root = $root;
+
+		$authConfigFile = $this->root . '/../config/auth.php';
+		if (file_exists($authConfigFile)) {
+			echo 'Good: Authentication salt file already exists.', "\n";
+		}
+
 		//mongo
 		if (class_exists('\MongoClient', false)) {
-			echo 'Good: MongoDB client driver is installed.', "\n\n";
+			echo 'Good: MongoDB client driver is installed.', "\n";
 		} else {
-			echo 'Problem: MongoDB client driver not installed.', "\n\n";
+			echo 'Problem: MongoDB client driver not installed.', "\n";
 		}
 		if (file_exists($this->root . '/../config/db.php')) {
-			echo 'Good: Database config file exists.', "\n\n";
+			echo 'Good: Database config file exists.', "\n";
 			$db = require $this->root . '/../config/db.php';
 			try {
 				$client = new \MongoClient($db['conn']);
 				$collections = $client->{$db['name']}->getCollectionNames();
-				echo 'Good: can connect to database.', "\n\n";
+				echo 'Good: can connect to database.', "\n";
 			} catch (\Exception $e) {
-				echo 'Problem: can not connect to database: ', $e->getMessage(), "\n\n";
+				echo 'Problem: can not connect to database: ', $e->getMessage(), "\n";
 			}
 		} else {
-			echo 'Problem: Database config file does not exists.', "\n\n";
+			echo 'Problem: Database config file does not exists.', "\n";
 		}
 
 		//memcache
 		if (class_exists('\Memcache', false)) {
-			echo 'Good: Memcache client driver is installed.', "\n\n";
+			echo 'Good: Memcache client driver is installed.', "\n";
 			$memcache = new \Memcache();
 			try {
 				$result = @$memcache->pconnect('localhost', 11211);
 				if ($result !== false) {
-					echo 'Good: Memcache connection made.', "\n\n";
+					echo 'Good: Memcache connection made.', "\n";
 				} else {
-					echo 'Problem: Memcache connection failed.', "\n\n";
+					echo 'Problem: Memcache connection failed.', "\n";
 				}
 			} catch (\Exception $e) {
-				echo 'Problem: Memcache: ', $e->getMessage(), "\n\n";
+				echo 'Problem: Memcache: ', $e->getMessage(), "\n";
 			}
 		} else {
-			echo 'Problem: Memcache client driver is not installed.', "\n\n";
+			echo 'Problem: Memcache client driver is not installed.', "\n";
 		}
 
 		//beanstalkd
 		if (class_exists('\Pheanstalk_Pheanstalk')) {
-			echo 'Good: Queue client driver is installed.', "\n\n";
+			echo 'Good: Queue client driver is installed.', "\n";
 			$queue = new \Pheanstalk_Pheanstalk('127.0.0.1');
         	try {
             	if ($queue->getConnection()->isServiceListening() != true) {
-       				echo 'Problem: Queue connetion not made.', "\n\n";
+       				echo 'Problem: Queue connetion not made.', "\n";
        			} else {
-       				echo 'Good: Queue connetion made.', "\n\n";
+       				echo 'Good: Queue connetion made.', "\n";
        			}
        		} catch (\Exception $e) {
-       			echo 'Problem: Queue: ', $e->getMessage(), "\n\n";
+       			echo 'Problem: Queue: ', $e->getMessage(), "\n";
        		}
 		} else {
-			echo 'Problem: Pheanstalkd client driver is not installed.', "\n\n";
+			echo 'Problem: Pheanstalkd client driver is not installed.', "\n";
 		}
 	}
 
@@ -152,7 +158,6 @@ class Build {
 	private function salt () {
 		$authConfigFile = $this->root . '/../config/auth.php';
 		if (file_exists($authConfigFile)) {
-			echo 'Good: Authentication salt file already exists.', "\n\n";
 			return;
 		}
 		file_put_contents($authConfigFile, '<?php
@@ -172,7 +177,7 @@ return [
 		$users = new \MongoCollection($db, 'users');
 		$found = $users->findOne(['acl.zone' => 'Manager'], ['_id', 'acl']);
 		if (isset($found['_id'])) {
-			echo 'Good: Superadmin already exists.', "\n\n";
+			echo 'Good: Superadmin already exists.', "\n";
 			return;
 		}
 		$users->save([
@@ -185,7 +190,7 @@ return [
 			'password' => sha1($auth['salt'] . 'password'),
 			'created_date' => new \MongoDate(strtotime('now'))
 		]);
-		echo 'Good: Superuser created. admin@website.com : password', "\n\n";
+		echo 'Good: Superuser created. admin@website.com : password', "\n";
 	}
 
 	private function bundles () {
