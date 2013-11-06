@@ -167,30 +167,34 @@ return [
 	}
 
 	private function adminUserFirst () {
-		$auth = require $this->root . '/../config/auth.php';
-		if (!isset($auth['salt'])) {
-			echo 'Problem: No Salt set in auth config file';
+		try {
+			$auth = require $this->root . '/../config/auth.php';
+			if (!isset($auth['salt'])) {
+				echo 'Problem: No Salt set in auth config file';
+			}
+			$config = require $this->root . '/../config/db.php';
+			$client = new \MongoClient($config['conn']);
+			$db = new \MongoDB($client, $config['name']);
+			$users = new \MongoCollection($db, 'users');
+			$found = $users->findOne(['acl.zone' => 'Manager'], ['_id', 'acl']);
+			if (isset($found['_id'])) {
+				echo 'Good: Superadmin already exists.', "\n";
+				return;
+			}
+			$users->save([
+				'first_name' => 'Admin',
+				'last_name' => 'Admin',
+				'email' => 'admin@website.com',
+				'acl' => [
+					['zone' => 'Manager', 'acl' => ['superadmin']]
+				],
+				'password' => sha1($auth['salt'] . 'password'),
+				'created_date' => new \MongoDate(strtotime('now'))
+			]);
+			echo 'Good: Superuser created. admin@website.com : password', "\n";
+		} catch (\Exception $e) {
+			echo 'Note: Can not create manager superuser because database credentials not yet set.', "\n";
 		}
-		$config = require $this->root . '/../config/db.php';
-		$client = new \MongoClient($config['conn']);
-		$db = new \MongoDB($client, $config['name']);
-		$users = new \MongoCollection($db, 'users');
-		$found = $users->findOne(['acl.zone' => 'Manager'], ['_id', 'acl']);
-		if (isset($found['_id'])) {
-			echo 'Good: Superadmin already exists.', "\n";
-			return;
-		}
-		$users->save([
-			'first_name' => 'Admin',
-			'last_name' => 'Admin',
-			'email' => 'admin@website.com',
-			'acl' => [
-				['zone' => 'Manager', 'acl' => ['superadmin']]
-			],
-			'password' => sha1($auth['salt'] . 'password'),
-			'created_date' => new \MongoDate(strtotime('now'))
-		]);
-		echo 'Good: Superuser created. admin@website.com : password', "\n";
 	}
 
 	private function bundles () {
