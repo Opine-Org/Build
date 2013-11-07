@@ -37,7 +37,8 @@ class Build {
 	private $bundleRoute;
 	private $search;
 
-	public function __construct ($pubSubBuild, $collectionRoute, $helperRoute, $formRoute, $configRoute, $bundleRoute, $filter, $cache, $search) {
+	public function __construct ($pubSubBuild, $collectionRoute, $helperRoute, $formRoute, $configRoute, $bundleRoute, $fieldRoute, $filter, $cache, $search) {
+		$this->fieldRoute = $fieldRoute;
 		$this->pubSubBuild = $pubSubBuild;
 		$this->collectionRoute = $collectionRoute;
 		$this->helperRoute = $helperRoute;
@@ -68,6 +69,7 @@ class Build {
 		$this->collections();
 		$this->filters();
 		$this->forms();
+		$this->field();
 		$this->helpers();
 		$this->bundles();
 		$this->topics();
@@ -75,6 +77,10 @@ class Build {
 		$this->adminUserFirst();
 		echo 'Built', "\n";
 		exit;
+	}
+
+	public function field () {
+		$this->fieldRoute->build($this->root);
 	}
 
 	public function environmentCheck ($root) {
