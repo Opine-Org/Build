@@ -59,7 +59,9 @@ class Build {
 	public function project ($root, $url='%dataAPI%') {
 		$this->root = $root;
 		$this->url = $url;
-		$this->search->indexCreateDefault();
+		try {
+			$this->search->indexCreateDefault();
+		} catch (\Exception $e) {}
 		$this->clearCache();
 		$this->salt();
 		$this->config();
@@ -74,7 +76,9 @@ class Build {
 		$this->bundles();
 		$this->topics();
 		$this->moveStatic();
-		$this->adminUserFirst();
+		try {
+			$this->adminUserFirst();
+		} catch (\Exception $e) {}
 		echo 'Built', "\n";
 		exit;
 	}
