@@ -177,6 +177,10 @@ return [
 	}
 
 	private function adminUserFirst () {
+		if (!class_exists('MongoClient', false)) {
+			echo 'Note: MongoDB client driver not installed.', "\n";
+			return;
+		}
 		try {
 			$auth = require $this->root . '/../config/auth.php';
 			if (!isset($auth['salt'])) {
