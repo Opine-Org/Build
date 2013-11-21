@@ -229,6 +229,7 @@ return [
 
 	private function helpers () {
 		$this->cache->set($this->root . '-helpers.json', $this->helperRoute->build($this->root), 2, 0);
+		$this->helperRoute->bundleBuild($this->root);
 	}
 
 	private function topics () {
