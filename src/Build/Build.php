@@ -207,7 +207,7 @@ return [
 			]);
 			echo 'Good: Superuser created. admin@website.com : password', "\n";
 		} catch (\Exception $e) {
-			echo 'Note: Can not create manager superuser because database credentials not yet set.', "\n";
+			echo 'Note: Can not create manager superuser because database credentials not yet set, or:', $e->getMessage(), "\n";
 		}
 	}
 
