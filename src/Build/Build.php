@@ -36,8 +36,9 @@ class Build {
 	private $cache;
 	private $bundleRoute;
 	private $search;
+	private $authentication;
 
-	public function __construct ($pubSubBuild, $collectionRoute, $helperRoute, $formRoute, $configRoute, $bundleRoute, $fieldRoute, $filter, $cache, $search) {
+	public function __construct ($pubSubBuild, $collectionRoute, $helperRoute, $formRoute, $configRoute, $bundleRoute, $fieldRoute, $filter, $cache, $search, $authentication) {
 		$this->fieldRoute = $fieldRoute;
 		$this->pubSubBuild = $pubSubBuild;
 		$this->collectionRoute = $collectionRoute;
@@ -48,6 +49,7 @@ class Build {
 		$this->filter = $filter;
 		$this->cache = $cache;
 		$this->search = $search;
+		$this->authentication = $authentication;
 	}
 
 	public function upgrade ($root) {
@@ -76,6 +78,7 @@ class Build {
 		$this->bundles();
 		$this->topics();
 		$this->moveStatic();
+		$this->acl();
 		try {
 			$this->adminUserFirst();
 		} catch (\Exception $e) {}
@@ -190,7 +193,7 @@ return [
 			$client = new \MongoClient($config['conn']);
 			$db = new \MongoDB($client, $config['name']);
 			$users = new \MongoCollection($db, 'users');
-			$found = $users->findOne(['acl.zone' => 'Manager'], ['_id', 'acl']);
+			$found = $users->findOne(['groups' => 'manager'], ['_id', 'groups']);
 			if (isset($found['_id'])) {
 				echo 'Good: Superadmin already exists.', "\n";
 				return;
@@ -199,9 +202,7 @@ return [
 				'first_name' => 'Admin',
 				'last_name' => 'Admin',
 				'email' => 'admin@website.com',
-				'acl' => [
-					['zone' => 'Manager', 'acl' => ['superadmin']]
-				],
+				'groups' => ['manager'],
 				'password' => sha1($auth['salt'] . 'password'),
 				'created_date' => new \MongoDate(strtotime('now'))
 			]);
@@ -233,6 +234,18 @@ return [
 
 	private function topics () {
 		$this->cache->set($this->root . '-topics.json', json_encode($this->pubSubBuild->build($this->root)), 2, 0);
+	}
+
+	private function acl () {
+		$folder = $this->root . '/../acl';
+		if (!file_exists($folder)) {
+			mkdir($folder);
+		}
+		$path = $this->root . '/../acl/custom.yml';
+		if (!file_exists($path)) {
+			file_put_contents($path, 'imports:' . "\n\n" . 'groups:');
+		}
+		$this->authentication->build();
 	}
 
 	private function db () {
