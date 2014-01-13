@@ -198,13 +198,16 @@ return [
 				echo 'Good: Superadmin already exists.', "\n";
 				return;
 			}
+			$id = new \MongoId();
 			$users->save([
+				'_id' => $id,
 				'first_name' => 'Admin',
 				'last_name' => 'Admin',
 				'email' => 'admin@website.com',
 				'groups' => ['manager'],
 				'password' => sha1($auth['salt'] . 'password'),
-				'created_date' => new \MongoDate(strtotime('now'))
+				'created_date' => new \MongoDate(strtotime('now')),
+				'dbURI' => 'users:' . (string)$id
 			]);
 			echo 'Good: Superuser created. admin@website.com : password', "\n";
 		} catch (\Exception $e) {
