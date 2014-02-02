@@ -1,5 +1,5 @@
 imports:
-    - vendor/virtuecenter/framework/container.yml
+    - vendor/opine/framework/container.yml
 
 parameters:
 
