@@ -254,7 +254,7 @@ return [
     private function db () {
         $dbPath = $this->root . '/../config/db.php';
         if (!file_exists($dbPath)) {
-            file_put_contents($dbPath, file_get_contents(__DIR__ . '/../../static/db.php'));
+            file_put_contents($dbPath, file_get_contents(__DIR__ . '/../static/db.php'));
         }
     }
 
@@ -268,7 +268,7 @@ return [
     private function route () {
         $routePath = $this->root . '/../Route.php';
         if (!file_exists($routePath)) {
-            file_put_contents($routePath, file_get_contents(__DIR__ . '/../../static/Route.php'));
+            file_put_contents($routePath, file_get_contents(__DIR__ . '/../static/Route.php'));
         }
     }
 
