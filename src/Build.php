@@ -79,11 +79,18 @@ class Build {
         $this->topics();
         $this->moveStatic();
         $this->acl();
+        $this->tmp();
         try {
             $this->adminUserFirst();
         } catch (\Exception $e) {}
         echo 'Built', "\n";
         exit;
+    }
+
+    public function tmp () {
+        //fix the dev version of Slim with my changes...
+        $slimPath = $this->root . '/../vendor/slim/slim/Slim/App.php';
+        file_put_contents($slimPath, file_get_contents(__DIR__ . '/../static/SlimApp.php'));
     }
 
     public function field () {
