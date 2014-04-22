@@ -1,13 +1,13 @@
 <?php
 class Route {
-    private $slim;
+    private $route;
 
     public function __construct ($container) {
-        $this->slim = $container->slim;
+        $this->route = $container->route;
     }
 
     public function custom () {
-        $this->slim->get('/', function () {
+        $this->route->get('/', function () {
             echo '<html><body>Homepage</body></html>';
         });
     }
