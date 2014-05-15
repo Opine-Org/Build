@@ -6,7 +6,7 @@ class Route {
         $this->route = $container->route;
     }
 
-    public function custom () {
+    public function paths () {
         $this->route->get('/', function () {
             echo '<html><body>Homepage</body></html>';
         });

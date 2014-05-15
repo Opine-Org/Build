@@ -75,6 +75,7 @@ class Build {
         $this->forms();
         $this->field();
         $this->helpers();
+        $this->bundle();
         $this->bundles();
         $this->topics();
         $this->moveStatic();
@@ -213,6 +214,14 @@ return [
         } catch (\Exception $e) {
             echo 'Note: Can not create manager superuser because database credentials not yet set, or:', $e->getMessage(), "\n";
         }
+    }
+
+    private function bundle () {
+        $defaultBundle = $this->root . '/../bundles/bundles.yml';
+        if (file_exists($defaultBundle)) {
+            return;
+        }
+        file_put_contents($defaultBundle, file_get_contents(__DIR__ . '/../static/bundles.yml'));
     }
 
     private function bundles () {
