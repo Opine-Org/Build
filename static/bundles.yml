@@ -1,13 +1,9 @@
 bundles:
     Manager:
-        class: "Opine\\Manager"
-        vendorpath: "opine/semantic-cm/src/Manager"
+        class: "Opine\Manager"
     Membership:
-        class: "Opine\\Membership"
-        vendorpath: "opine/membership/src/Membership"
+        class: "Opine\Membership"
     Registration:
-        class: "Opine\\Registration"
-        vendorpath: "opine/registration/src/Registration"
+        class: "Opine\Registration"
     Person:
-        class: "Opine\\Person"
-        vendorpath: "opine/person/src/Person"
+        class: "Opine\Person"

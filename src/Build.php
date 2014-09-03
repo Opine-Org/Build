@@ -37,8 +37,9 @@ class Build {
     private $bundleRoute;
     private $search;
     private $authentication;
+    private $route;
 
-    public function __construct ($pubSubBuild, $collectionRoute, $helperRoute, $formRoute, $configRoute, $bundleRoute, $fieldRoute, $filter, $cache, $search, $authentication) {
+    public function __construct ($pubSubBuild, $collectionRoute, $helperRoute, $formRoute, $configRoute, $bundleRoute, $fieldRoute, $filter, $cache, $search, $authentication, $route) {
         $this->fieldRoute = $fieldRoute;
         $this->pubSubBuild = $pubSubBuild;
         $this->collectionRoute = $collectionRoute;
@@ -50,6 +51,7 @@ class Build {
         $this->cache = $cache;
         $this->search = $search;
         $this->authentication = $authentication;
+        $this->route = $route;
     }
 
     public function upgrade ($root) {
@@ -71,7 +73,6 @@ class Build {
         $this->db();
         $this->route();
         $this->collections();
-        $this->filters();
         $this->forms();
         $this->field();
         $this->helpers();
@@ -161,11 +162,12 @@ class Build {
 
     private function clearCache () {
         $this->cache->deleteBatch([
-            $this->root . '-collections.json',
-            $this->root . '-filters.json',
-            $this->root . '-helpers.json',
-            $this->root . '-events.json',
-            $this->root . '-forms.json'
+            $this->root . '-collections',
+            $this->root . '-forms',
+            $this->root . '-bundles',
+            $this->root . '-topics',
+            $this->root . '-routes',
+            $this->root . '-acl'
         ]);
     }
 
@@ -225,19 +227,15 @@ return [
     }
 
     private function bundles () {
-        $this->cache->set($this->root . '-bundles.json', $this->bundleRoute->build($this->root));
+        $this->cache->set($this->root . '-bundles', $this->bundleRoute->build($this->root));
     }
 
     private function collections () {
-        $this->cache->set($this->root . '-collections.json', $this->collectionRoute->build($this->root, $this->url), 2, 0);
+        $this->cache->set($this->root . '-collections', $this->collectionRoute->build($this->root, $this->url), 2, 0);
     }
 
     private function forms () {
-        $this->cache->set($this->root . '-forms.json', $this->formRoute->build($this->root, $this->url), 2, 0);
-    }
-
-    private function filters () {
-        $this->cache->set($this->root . '-filters.json', $this->filter->build($this->root), 2, 0);
+        $this->cache->set($this->root . '-forms', $this->formRoute->build($this->root, $this->url), 2, 0);
     }
 
     private function helpers () {
@@ -245,7 +243,9 @@ return [
     }
 
     private function topics () {
-        $this->cache->set($this->root . '-topics.json', json_encode($this->pubSubBuild->build($this->root)), 2, 0);
+        $topics = json_encode($this->pubSubBuild->build());
+        file_put_contents($this->root . '/../cache/topics.json', $topics);
+        $this->cache->set($this->root . '-topics', $topics, 2, 0);
     }
 
     private function acl () {
@@ -279,6 +279,8 @@ return [
         if (!file_exists($routePath)) {
             file_put_contents($routePath, file_get_contents(__DIR__ . '/../static/Route.php'));
         }
+        $routes = json_encode($this->route->cacheGenerate());
+        $this->cache->set($this->root . '-routes', $routes, 2, 0);
     }
 
     private function directories () {
@@ -288,7 +290,7 @@ return [
                 mkdir($dirPath);
             }
         }
-        foreach (['collections', 'config', 'forms', 'app', 'mvc', 'subscribers', 'filters', 'bundles'] as $dir) {
+        foreach (['collections', 'config', 'forms', 'app', 'models', 'views', 'controllers', 'bundles', 'cache'] as $dir) {
             $dirPath = $this->root . '/../' . $dir;
             if (!file_exists($dirPath)) {
                 mkdir($dirPath);
