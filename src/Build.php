@@ -38,8 +38,9 @@ class Build {
     private $search;
     private $authentication;
     private $route;
+    private $containerCache;
 
-    public function __construct ($pubSubBuild, $collectionRoute, $helperRoute, $formRoute, $configRoute, $bundleRoute, $fieldRoute, $filter, $cache, $search, $authentication, $route) {
+    public function __construct ($pubSubBuild, $collectionRoute, $helperRoute, $formRoute, $configRoute, $bundleRoute, $fieldRoute, $filter, $cache, $search, $authentication, $route, $containerCache) {
         $this->fieldRoute = $fieldRoute;
         $this->pubSubBuild = $pubSubBuild;
         $this->collectionRoute = $collectionRoute;
@@ -52,6 +53,7 @@ class Build {
         $this->search = $search;
         $this->authentication = $authentication;
         $this->route = $route;
+        $this->containerCache = $containerCache;
     }
 
     public function upgrade ($root) {
@@ -310,5 +312,10 @@ return [
                 mkdir($dirPath);
             }
         }
+    }
+
+    public function container ($root) {
+        $this->containerCache->read($root . '/../container.yml');
+        $this->containerCache->write();
     }
 }
