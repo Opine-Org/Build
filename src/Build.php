@@ -28,7 +28,7 @@ class Build {
     private $root = false;
     private $url = false;
     private $pubSubBuild;
-    private $collectionRoute;
+    private $collectionModel;
     private $helperRoute;
     private $configRoute;
     private $formRoute;
@@ -40,10 +40,11 @@ class Build {
     private $route;
     private $containerCache;
 
-    public function __construct ($pubSubBuild, $collectionRoute, $helperRoute, $formRoute, $configRoute, $bundleRoute, $fieldRoute, $filter, $cache, $search, $authentication, $route, $containerCache) {
+    public function __construct ($root, $pubSubBuild, $collectionModel, $helperRoute, $formRoute, $configRoute, $bundleRoute, $fieldRoute, $filter, $cache, $search, $authentication, $route, $containerCache) {
+        $this->root = $root;
         $this->fieldRoute = $fieldRoute;
         $this->pubSubBuild = $pubSubBuild;
-        $this->collectionRoute = $collectionRoute;
+        $this->collectionModel = $collectionModel;
         $this->helperRoute = $helperRoute;
         $this->configRoute = $configRoute;
         $this->formRoute = $formRoute;
@@ -56,15 +57,13 @@ class Build {
         $this->containerCache = $containerCache;
     }
 
-    public function upgrade ($root) {
-        $this->collectionRoute->upgrade($root);
-        $this->formRoute->upgrade($root);
-        $this->bundleRoute->upgrade($root);
+    public function upgrade () {
+        $this->collectionModel->upgrade();
+        $this->formRoute->upgrade($this->root);
+        $this->bundleRoute->upgrade($this->root);
     }
 
-    public function project ($root, $url='%dataAPI%') {
-        $this->root = $root;
-        $this->url = $url;
+    public function project () {
         try {
             $this->search->indexCreateDefault();
         } catch (\Exception $e) {}
@@ -73,6 +72,7 @@ class Build {
         $this->config();
         $this->directories();
         $this->db();
+        $this->container();
         $this->route();
         $this->collections();
         $this->forms();
@@ -94,9 +94,7 @@ class Build {
         $this->fieldRoute->build($this->root);
     }
 
-    public function environmentCheck ($root) {
-        $this->root = $root;
-
+    public function environmentCheck () {
         $authConfigFile = $this->root . '/../config/auth.php';
         if (file_exists($authConfigFile)) {
             echo 'Good: Authentication salt file already exists.', "\n";
@@ -233,11 +231,11 @@ return [
     }
 
     private function collections () {
-        $this->cache->set($this->root . '-collections', $this->collectionRoute->build($this->root, $this->url), 2, 0);
+        $this->cache->set($this->root . '-collections', $this->collectionModel->build(), 2, 0);
     }
 
     private function forms () {
-        $this->cache->set($this->root . '-forms', $this->formRoute->build($this->root, $this->url), 2, 0);
+        $this->cache->set($this->root . '-forms', $this->formRoute->build($this->root), 2, 0);
     }
 
     private function helpers () {
@@ -314,8 +312,9 @@ return [
         }
     }
 
-    public function container ($root) {
-        $this->containerCache->read($root . '/../container.yml');
+    public function container () {
+        $this->containerCache->clear();
+        $this->containerCache->read($this->root . '/../container.yml');
         $this->containerCache->write();
     }
 }
