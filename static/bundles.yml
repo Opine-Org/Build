@@ -1,9 +1,9 @@
 bundles:
     Manager:
-        class: "Opine\Manager"
+        namespace: "Opine\Manager"
     Membership:
-        class: "Opine\Membership"
+        namespace: "Opine\Membership"
     Registration:
-        class: "Opine\Registration"
+        namespace: "Opine\Registration"
     Person:
-        class: "Opine\Person"
+        namespace: "Opine\Person"

@@ -2,7 +2,7 @@ js:
 
 binding:
     {{$plural}}:
-        url: '{{$url}}/json-data/{{$plural}}/all/10/0/{"display_date":-1}'
+        url: '/api/collection/{{$plural}}/all/10/0/{"display_date":-1}'
         args: []
         partial: 'collections/{{$plural}}.hbs'
         type: 'Collection'

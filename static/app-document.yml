@@ -2,7 +2,7 @@ js:
 
 binding:
     {{$singular}}:
-        url: '{{$url}}/json-data/{{$plural}}/bySlug/:slug'
+        url: '/api/collection/{{$plural}}/bySlug/:slug'
         args: []
         partial: 'documents/{{$singular}}.hbs'
         type: 'Document'

@@ -31,7 +31,7 @@ class Build {
     private $collectionModel;
     private $helperRoute;
     private $configRoute;
-    private $formRoute;
+    private $formModel;
     private $filter;
     private $cache;
     private $bundleRoute;
@@ -40,14 +40,14 @@ class Build {
     private $route;
     private $containerCache;
 
-    public function __construct ($root, $pubSubBuild, $collectionModel, $helperRoute, $formRoute, $configRoute, $bundleRoute, $fieldRoute, $filter, $cache, $search, $authentication, $route, $containerCache) {
+    public function __construct ($root, $pubSubBuild, $collectionModel, $helperRoute, $formModel, $configRoute, $bundleRoute, $fieldRoute, $filter, $cache, $search, $authentication, $route, $containerCache) {
         $this->root = $root;
         $this->fieldRoute = $fieldRoute;
         $this->pubSubBuild = $pubSubBuild;
         $this->collectionModel = $collectionModel;
         $this->helperRoute = $helperRoute;
         $this->configRoute = $configRoute;
-        $this->formRoute = $formRoute;
+        $this->formModel = $formModel;
         $this->bundleRoute = $bundleRoute;
         $this->filter = $filter;
         $this->cache = $cache;
@@ -59,7 +59,7 @@ class Build {
 
     public function upgrade () {
         $this->collectionModel->upgrade();
-        $this->formRoute->upgrade($this->root);
+        $this->formModel->upgrade($this->root);
         $this->bundleRoute->upgrade($this->root);
     }
 
@@ -235,7 +235,7 @@ return [
     }
 
     private function forms () {
-        $this->cache->set($this->root . '-forms', $this->formRoute->build($this->root), 2, 0);
+        $this->cache->set($this->root . '-forms', $this->formModel->build($this->root), 2, 0);
     }
 
     private function helpers () {
