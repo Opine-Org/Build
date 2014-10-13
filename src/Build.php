@@ -72,14 +72,14 @@ class Build {
         $this->config();
         $this->directories();
         $this->db();
+        $this->bundle();
+        $this->bundles();
         $this->container();
         $this->route();
         $this->collections();
         $this->forms();
         $this->field();
         $this->helpers();
-        $this->bundle();
-        $this->bundles();
         $this->topics();
         $this->moveStatic();
         $this->acl();
@@ -167,7 +167,7 @@ class Build {
             $this->root . '-bundles',
             $this->root . '-topics',
             $this->root . '-routes',
-            $this->root . '-acl'
+            $this->root . '-container'
         ]);
     }
 
@@ -315,6 +315,6 @@ return [
     public function container () {
         $this->containerCache->clear();
         $this->containerCache->read($this->root . '/../container.yml');
-        $this->containerCache->write();
+        $this->cache->set($this->root . '-container', $this->containerCache->write(), 2, 0);
     }
 }
