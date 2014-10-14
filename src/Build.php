@@ -116,7 +116,7 @@ class Build {
     }
 
     public function field () {
-        $this->fieldRoute->build($this->root);
+        $this->fieldRoute->build();
     }
 
     public function environmentCheck () {
