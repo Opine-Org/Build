@@ -1,5 +1,3 @@
-js:
-
 binding:
     {{$singular}}:
         url: '/api/collection/{{$plural}}/bySlug/:slug'
