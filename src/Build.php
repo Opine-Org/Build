@@ -103,7 +103,7 @@ class Build {
         $this->templatesCompile();
         $this->topics();
         $this->moveStatic();
-        $this->acl();
+        //$this->acl();
         try {
             $this->adminUserFirst();
         } catch (Exception $e) {}
