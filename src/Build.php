@@ -23,6 +23,14 @@
  * THE SOFTWARE.
  */
 namespace Opine;
+use MongoClient;
+use MongoDB;
+use MongoCollection;
+use MongoId;
+use MongoDate;
+use Exception;
+use Memcache;
+use Pheanstalk_Pheanstalk;
 
 class Build {
     private $root = false;
@@ -32,15 +40,28 @@ class Build {
     private $helperRoute;
     private $configRoute;
     private $formModel;
-    private $filter;
     private $cache;
     private $bundleRoute;
     private $search;
-    private $authentication;
     private $route;
     private $containerCache;
+    private $handlebarService;
 
-    public function __construct ($root, $pubSubBuild, $collectionModel, $helperRoute, $formModel, $configRoute, $bundleRoute, $fieldRoute, $filter, $cache, $search, $authentication, $route, $containerCache) {
+    public function __construct (
+        $root,
+        $fieldRoute,
+        $pubSubBuild,
+        $collectionModel,
+        $helperRoute,
+        $configRoute,
+        $formModel,
+        $bundleRoute,
+        $cache,
+        $search,
+        $route,
+        $containerCache,
+        $handlebarService)
+    {
         $this->root = $root;
         $this->fieldRoute = $fieldRoute;
         $this->pubSubBuild = $pubSubBuild;
@@ -49,12 +70,11 @@ class Build {
         $this->configRoute = $configRoute;
         $this->formModel = $formModel;
         $this->bundleRoute = $bundleRoute;
-        $this->filter = $filter;
         $this->cache = $cache;
         $this->search = $search;
-        $this->authentication = $authentication;
         $this->route = $route;
         $this->containerCache = $containerCache;
+        $this->handlebarService = $handlebarService;
     }
 
     public function upgrade () {
@@ -66,7 +86,7 @@ class Build {
     public function project () {
         try {
             $this->search->indexCreateDefault();
-        } catch (\Exception $e) {}
+        } catch (Exception $e) {}
         $this->clearCache();
         $this->salt();
         $this->config();
@@ -80,14 +100,19 @@ class Build {
         $this->forms();
         $this->field();
         $this->helpers();
+        $this->templatesCompile();
         $this->topics();
         $this->moveStatic();
         $this->acl();
         try {
             $this->adminUserFirst();
-        } catch (\Exception $e) {}
+        } catch (Exception $e) {}
         echo 'Built', "\n";
         exit;
+    }
+
+    public function templatesCompile () {
+        $this->handlebarService->build();
     }
 
     public function field () {
@@ -110,10 +135,10 @@ class Build {
             echo 'Good: Database config file exists.', "\n";
             $db = require $this->root . '/../config/db.php';
             try {
-                $client = new \MongoClient($db['conn']);
+                $client = new MongoClient($db['conn']);
                 $collections = $client->{$db['name']}->getCollectionNames();
                 echo 'Good: can connect to database.', "\n";
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 echo 'Problem: can not connect to database: ', $e->getMessage(), "\n";
             }
         } else {
@@ -123,7 +148,7 @@ class Build {
         //memcache
         if (class_exists('\Memcache', false)) {
             echo 'Good: Memcache client driver is installed.', "\n";
-            $memcache = new \Memcache();
+            $memcache = new Memcache();
             try {
                 $result = @$memcache->pconnect('localhost', 11211);
                 if ($result !== false) {
@@ -131,7 +156,7 @@ class Build {
                 } else {
                     echo 'Problem: Memcache connection failed.', "\n";
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 echo 'Problem: Memcache: ', $e->getMessage(), "\n";
             }
         } else {
@@ -141,7 +166,7 @@ class Build {
         //beanstalkd
         if (class_exists('\Pheanstalk_Pheanstalk')) {
             echo 'Good: Queue client driver is installed.', "\n";
-            $queue = new \Pheanstalk_Pheanstalk('127.0.0.1');
+            $queue = new Pheanstalk_Pheanstalk('127.0.0.1');
             try {
                 if ($queue->getConnection()->isServiceListening() != true) {
                     echo 'Problem: Queue connetion not made.', "\n";
@@ -193,15 +218,15 @@ return [
                 echo 'Problem: No Salt set in auth config file';
             }
             $config = require $this->root . '/../config/db.php';
-            $client = new \MongoClient($config['conn']);
-            $db = new \MongoDB($client, $config['name']);
-            $users = new \MongoCollection($db, 'users');
+            $client = new MongoClient($config['conn']);
+            $db = new MongoDB($client, $config['name']);
+            $users = new MongoCollection($db, 'users');
             $found = $users->findOne(['groups' => 'manager'], ['_id', 'groups']);
             if (isset($found['_id'])) {
                 echo 'Good: Superadmin already exists.', "\n";
                 return;
             }
-            $id = new \MongoId();
+            $id = new MongoId();
             $users->save([
                 '_id' => $id,
                 'first_name' => 'Admin',
@@ -209,11 +234,11 @@ return [
                 'email' => 'admin@website.com',
                 'groups' => ['manager'],
                 'password' => sha1($auth['salt'] . 'password'),
-                'created_date' => new \MongoDate(strtotime('now')),
+                'created_date' => new MongoDate(strtotime('now')),
                 'dbURI' => 'users:' . (string)$id
             ]);
             echo 'Good: Superuser created. admin@website.com : password', "\n";
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             echo 'Note: Can not create manager superuser because database credentials not yet set, or:', $e->getMessage(), "\n";
         }
     }
@@ -227,7 +252,7 @@ return [
     }
 
     private function bundles () {
-        $this->cache->set($this->root . '-bundles', $this->bundleRoute->build($this->root));
+        $this->cache->set($this->root . '-bundles', $this->bundleRoute->build());
     }
 
     private function collections () {
@@ -235,11 +260,11 @@ return [
     }
 
     private function forms () {
-        $this->cache->set($this->root . '-forms', $this->formModel->build($this->root), 2, 0);
+        $this->cache->set($this->root . '-forms', $this->formModel->build(), 2, 0);
     }
 
     private function helpers () {
-        $this->helperRoute->build($this->root);
+        $this->helperRoute->buildAll();
     }
 
     private function topics () {
@@ -248,6 +273,7 @@ return [
         $this->cache->set($this->root . '-topics', $topics, 2, 0);
     }
 
+/*
     private function acl () {
         $folder = $this->root . '/../acl';
         if (!file_exists($folder)) {
@@ -259,7 +285,7 @@ return [
         }
         $this->authentication->build();
     }
-
+*/
     private function db () {
         $dbPath = $this->root . '/../config/db.php';
         if (!file_exists($dbPath)) {
