@@ -86,7 +86,9 @@ class Build {
     public function project () {
         try {
             $this->search->indexCreateDefault();
-        } catch (Exception $e) {}
+        } catch (Exception $e) {
+            //echo 'Search Index Error: ', $e->getMessage(), "\n";
+        }
         $this->clearCache();
         $this->salt();
         $this->config();
