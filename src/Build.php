@@ -105,12 +105,10 @@ class Build {
         $this->templatesCompile();
         $this->topics();
         $this->moveStatic();
-        //$this->acl();
         try {
             $this->adminUserFirst();
         } catch (Exception $e) {}
         echo 'Built', "\n";
-        exit;
     }
 
     public function templatesCompile () {
