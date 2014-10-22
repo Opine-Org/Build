@@ -1,3 +1,6 @@
+includes:
+    - 'package-container.yml'
+
 services:
     cache:
         class:     'Opine\Cache'

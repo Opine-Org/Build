@@ -46,6 +46,7 @@ class Build {
     private $route;
     private $containerCache;
     private $handlebarService;
+    private $languageModel;
 
     public function __construct (
         $root,
@@ -60,7 +61,8 @@ class Build {
         $search,
         $route,
         $containerCache,
-        $handlebarService)
+        $handlebarService,
+        $languageModel)
     {
         $this->root = $root;
         $this->fieldRoute = $fieldRoute;
@@ -75,6 +77,7 @@ class Build {
         $this->route = $route;
         $this->containerCache = $containerCache;
         $this->handlebarService = $handlebarService;
+        $this->languageModel = $languageModel;
     }
 
     public function upgrade () {
@@ -105,10 +108,15 @@ class Build {
         $this->templatesCompile();
         $this->topics();
         $this->moveStatic();
+        $this->languages();
         try {
             $this->adminUserFirst();
         } catch (Exception $e) {}
         echo 'Built', "\n";
+    }
+
+    public function languages () {
+        $this->cache->set($this->root . '-languages', $this->languageModel->build());
     }
 
     public function templatesCompile () {
@@ -192,7 +200,8 @@ class Build {
             $this->root . '-bundles',
             $this->root . '-topics',
             $this->root . '-routes',
-            $this->root . '-container'
+            $this->root . '-container',
+            $this->root . '-languages'
         ]);
     }
 
@@ -294,8 +303,8 @@ return [
     }
 
     private function moveStatic () {
-        @copy($this->root . '/../vendor/opine/separation/dependencies/jquery.min.js', $this->root . '/js/jquery.min.js');
-        @copy($this->root . '/../vendor/opine/separation/dependencies/jquery.form.js', $this->root . '/js/jquery.form.js');
+        @copy($this->root . '/../vendor/opine/layout/dependencies/jquery.min.js', $this->root . '/js/jquery.min.js');
+        @copy($this->root . '/../vendor/opine/layout/dependencies/jquery.form.js', $this->root . '/js/jquery.form.js');
         @copy($this->root . '/../vendor/opine/form/js/formXHR.js', $this->root . '/js/formXHR.js');
         @copy($this->root . '/../vendor/opine/form/js/formHelperSemantic.js', $this->root . '/js/formHelperSemantic.js');
     }
