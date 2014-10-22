@@ -1,4 +1,4 @@
-binding:
+regions:
     {{$singular}}:
         url: '/api/collection/{{$plural}}/bySlug/:slug'
         args: []

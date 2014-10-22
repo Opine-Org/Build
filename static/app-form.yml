@@ -1,4 +1,4 @@
-binding:
+regions:
     {{$form}}:
         url: '/api/form/{{$form}}'
         args: []
