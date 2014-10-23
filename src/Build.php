@@ -116,7 +116,7 @@ class Build {
     }
 
     public function languages () {
-        $this->cache->set($this->root . '-languages', $this->languageModel->build());
+        $this->cache->set($this->root . '-languages', $this->languageModel->build(), 0);
     }
 
     public function templatesCompile () {
@@ -261,15 +261,15 @@ return [
     }
 
     private function bundles () {
-        $this->cache->set($this->root . '-bundles', $this->bundleRoute->build());
+        $this->cache->set($this->root . '-bundles', $this->bundleRoute->build(), 0);
     }
 
     private function collections () {
-        $this->cache->set($this->root . '-collections', $this->collectionModel->build(), 2, 0);
+        $this->cache->set($this->root . '-collections', $this->collectionModel->build());
     }
 
     private function forms () {
-        $this->cache->set($this->root . '-forms', $this->formModel->build(), 2, 0);
+        $this->cache->set($this->root . '-forms', $this->formModel->build());
     }
 
     private function helpers () {
@@ -279,7 +279,7 @@ return [
     private function topics () {
         $topics = json_encode($this->pubSubBuild->build());
         file_put_contents($this->root . '/../cache/topics.json', $topics);
-        $this->cache->set($this->root . '-topics', $topics, 2, 0);
+        $this->cache->set($this->root . '-topics', $topics);
     }
 
 /*
@@ -315,7 +315,7 @@ return [
             file_put_contents($routePath, file_get_contents(__DIR__ . '/../static/Route.php'));
         }
         $routes = json_encode($this->route->cacheGenerate());
-        $this->cache->set($this->root . '-routes', $routes, 2, 0);
+        $this->cache->set($this->root . '-routes', $routes);
     }
 
     private function directories () {
@@ -350,6 +350,6 @@ return [
     public function container () {
         $this->containerCache->clear();
         $this->containerCache->read($this->root . '/../container.yml');
-        $this->cache->set($this->root . '-container', $this->containerCache->write(), 2, 0);
+        $this->cache->set($this->root . '-container', $this->containerCache->write());
     }
 }
