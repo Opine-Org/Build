@@ -35,13 +35,14 @@ use Pheanstalk_Pheanstalk;
 class Build {
     private $root = false;
     private $url = false;
-    private $pubSubBuild;
+    private $pubSubModel;
+    private $fieldModel;
     private $collectionModel;
-    private $helperRoute;
-    private $configRoute;
+    private $helperModel;
+    private $configModel;
     private $formModel;
     private $cache;
-    private $bundleRoute;
+    private $bundleModel;
     private $search;
     private $route;
     private $containerCache;
@@ -50,13 +51,13 @@ class Build {
 
     public function __construct (
         $root,
-        $fieldRoute,
-        $pubSubBuild,
+        $fieldModel,
+        $pubSubModel,
         $collectionModel,
-        $helperRoute,
-        $configRoute,
+        $helperModel,
+        $configModel,
         $formModel,
-        $bundleRoute,
+        $bundleModel,
         $cache,
         $search,
         $route,
@@ -65,13 +66,13 @@ class Build {
         $languageModel)
     {
         $this->root = $root;
-        $this->fieldRoute = $fieldRoute;
-        $this->pubSubBuild = $pubSubBuild;
+        $this->fieldModel = $fieldModel;
+        $this->pubSubModel = $pubSubModel;
         $this->collectionModel = $collectionModel;
-        $this->helperRoute = $helperRoute;
-        $this->configRoute = $configRoute;
+        $this->helperModel = $helperModel;
+        $this->configModel = $configModel;
         $this->formModel = $formModel;
-        $this->bundleRoute = $bundleRoute;
+        $this->bundleModel = $bundleModel;
         $this->cache = $cache;
         $this->search = $search;
         $this->route = $route;
@@ -83,7 +84,7 @@ class Build {
     public function upgrade () {
         $this->collectionModel->upgrade();
         $this->formModel->upgrade($this->root);
-        $this->bundleRoute->upgrade($this->root);
+        $this->bundleModel->upgrade($this->root);
     }
 
     public function project () {
@@ -124,7 +125,7 @@ class Build {
     }
 
     public function field () {
-        $this->fieldRoute->build();
+        $this->fieldModel->build();
     }
 
     public function environmentCheck () {
@@ -190,7 +191,7 @@ class Build {
     }
 
     private function config () {
-        $this->configRoute->build($this->root);
+        $this->configModel->build($this->root);
     }
 
     private function clearCache () {
@@ -261,7 +262,7 @@ return [
     }
 
     private function bundles () {
-        $this->cache->set($this->root . '-bundles', $this->bundleRoute->build(), 0);
+        $this->cache->set($this->root . '-bundles', $this->bundleModel->build(), 0);
     }
 
     private function collections () {
@@ -273,11 +274,11 @@ return [
     }
 
     private function helpers () {
-        $this->helperRoute->buildAll();
+        $this->helperModel->buildAll();
     }
 
     private function topics () {
-        $topics = json_encode($this->pubSubBuild->build());
+        $topics = json_encode($this->pubSubModel->build());
         file_put_contents($this->root . '/../cache/topics.json', $topics);
         $this->cache->set($this->root . '-topics', $topics);
     }
