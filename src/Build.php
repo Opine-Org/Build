@@ -275,6 +275,7 @@ return [
 
     private function helpers () {
         $this->helperModel->buildAll();
+        $this->handlebarService->helpersLoad();
     }
 
     private function topics () {
