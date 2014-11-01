@@ -202,7 +202,8 @@ class Build {
             $this->root . '-topics',
             $this->root . '-routes',
             $this->root . '-container',
-            $this->root . '-languages'
+            $this->root . '-languages',
+            $this->root . '-config'
         ]);
     }
 
@@ -279,24 +280,9 @@ return [
     }
 
     private function topics () {
-        $topics = json_encode($this->pubSubModel->build());
-        file_put_contents($this->root . '/../cache/topics.json', $topics);
-        $this->cache->set($this->root . '-topics', $topics);
+        $this->cache->set($this->root . '-topics', json_encode($this->pubSubModel->build()));
     }
 
-/*
-    private function acl () {
-        $folder = $this->root . '/../acl';
-        if (!file_exists($folder)) {
-            mkdir($folder);
-        }
-        $path = $this->root . '/../acl/custom.yml';
-        if (!file_exists($path)) {
-            file_put_contents($path, 'imports:' . "\n\n" . 'groups:');
-        }
-        $this->authentication->build();
-    }
-*/
     private function db () {
         $dbPath = $this->root . '/../config/db.php';
         if (!file_exists($dbPath)) {
