@@ -1,9 +1,3 @@
 bundles:
     Manager:
         namespace: "Opine\Manager"
-    Membership:
-        namespace: "Opine\Membership"
-    Registration:
-        namespace: "Opine\Registration"
-    Person:
-        namespace: "Opine\Person"
