@@ -340,4 +340,26 @@ return [
         $this->containerCache->read($this->root . '/../container.yml');
         $this->cache->set($this->root . '-container', $this->containerCache->write());
     }
+
+    public function collectionInstall ($collection) {
+        $path = $this->root . '/../collections/' . $collection . '.php';
+        if (file_exists($path)) {
+            echo $path, ': already exists.', "\n";
+            return;
+        }
+        $remote = 'https://raw.githubusercontent.com/Opine-Org/Collection/master/available/' . $collection . '.php';
+        file_put_contents($path, file_get_contents($remote));
+        echo $path, ': saved.', "\n";
+    }
+
+    public function managerInstall ($manager) {
+        $path = $this->root . '/../managers/' . $manager . '.php';
+        if (file_exists($path)) {
+            echo $path, ': already exists.', "\n";
+            return;
+        }
+        $remote = 'https://raw.githubusercontent.com/Opine-Org/Semantic-CM/master/available/' . $manager . '.php';
+        file_put_contents($path, file_get_contents($remote));
+        echo $path, ': saved.', "\n";
+    }
 }
