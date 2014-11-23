@@ -2,8 +2,8 @@
 class Route {
     private $route;
 
-    public function __construct ($container) {
-        $this->route = $container->route;
+    public function __construct ($route) {
+        $this->route = $route;
     }
 
     public function paths () {

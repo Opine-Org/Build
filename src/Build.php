@@ -1,6 +1,6 @@
 <?php
 /**
- * Opine\Build
+ * Opine\Build\Service
  *
  * Copyright (c)2013, 2014 Ryan Mahoney, https://github.com/Opine-Org <ryan@virtuecenter.com>
  *
@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace Opine;
+namespace Opine\Build;
 use MongoClient;
 use MongoDB;
 use MongoCollection;
@@ -31,10 +31,10 @@ use MongoDate;
 use Exception;
 use Memcache;
 use Pheanstalk_Pheanstalk;
+use Opine\Interfaces\Cache as CacheInterface;
 
-class Build {
+class Service {
     private $root = false;
-    private $url = false;
     private $pubSubModel;
     private $fieldModel;
     private $collectionModel;
@@ -58,7 +58,7 @@ class Build {
         $configModel,
         $formModel,
         $bundleModel,
-        $cache,
+        CacheInterface $cache,
         $search,
         $route,
         $containerCache,
