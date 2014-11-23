@@ -32,6 +32,7 @@ use Exception;
 use Memcache;
 use Pheanstalk_Pheanstalk;
 use Opine\Interfaces\Cache as CacheInterface;
+use Opine\Interfaces\Route as RouteInterface;
 
 class Service {
     private $root = false;
@@ -60,7 +61,7 @@ class Service {
         $bundleModel,
         CacheInterface $cache,
         $search,
-        $route,
+        RouteInterface $route,
         $containerCache,
         $handlebarService,
         $languageModel)
