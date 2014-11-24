@@ -49,6 +49,8 @@ class Service {
     private $containerCache;
     private $handlebarService;
     private $languageModel;
+    private $config;
+    private $db;
 
     public function __construct (
         $root,
@@ -64,7 +66,9 @@ class Service {
         RouteInterface $route,
         $containerCache,
         $handlebarService,
-        $languageModel)
+        $languageModel,
+        $config,
+        $db)
     {
         $this->root = $root;
         $this->fieldModel = $fieldModel;
@@ -80,6 +84,8 @@ class Service {
         $this->containerCache = $containerCache;
         $this->handlebarService = $handlebarService;
         $this->languageModel = $languageModel;
+        $this->config = $config;
+        $this->db = $db;
     }
 
     public function project () {
@@ -135,12 +141,12 @@ class Service {
         } else {
             echo 'Problem: MongoDB client driver not installed.', "\n";
         }
-        if (file_exists($this->root . '/../config/db.php')) {
+        $dbConfig = $this->config->get('db');
+        if (is_array($dbConfig) && count($dbConfig) > 0) {
             echo 'Good: Database config file exists.', "\n";
-            $db = require $this->root . '/../config/db.php';
             try {
-                $client = new MongoClient($db['conn']);
-                $collections = $client->{$db['name']}->getCollectionNames();
+                $client = new MongoClient($dbConfig['conn']);
+                $collections = $client->{$dbConfig['name']}->getCollectionNames();
                 echo 'Good: can connect to database.', "\n";
             } catch (Exception $e) {
                 echo 'Problem: can not connect to database: ', $e->getMessage(), "\n";
@@ -223,25 +229,23 @@ return [
             if (!isset($auth['salt'])) {
                 echo 'Problem: No Salt set in auth config file';
             }
-            $config = require $this->root . '/../config/db.php';
-            $client = new MongoClient($config['conn']);
-            $db = new MongoDB($client, $config['name']);
-            $users = new MongoCollection($db, 'users');
-            $found = $users->findOne(['groups' => 'manager'], ['_id', 'groups']);
+            $found = $this->db->collection('users')->findOne(['groups' => 'manager'], ['_id', 'groups']);
             if (isset($found['_id'])) {
                 echo 'Good: Superadmin already exists.', "\n";
                 return;
             }
-            $id = new MongoId();
-            $users->save([
-                '_id' => $id,
-                'first_name' => 'Admin',
-                'last_name' => 'Admin',
-                'email' => 'admin@website.com',
-                'groups' => ['manager'],
-                'password' => sha1($auth['salt'] . 'password'),
+            $id = $this->db->id();
+            $dbURI = 'users:' . (string)$id;
+            $this->db->document($dbURI)->upsert([
+                '_id'          => $id,
+                'first_name'   => 'Admin',
+                'last_name'    => 'Admin',
+                'email'        => 'admin@website.com',
+                'groups'       => ['manager'],
+                'password'     => sha1($auth['salt'] . 'password'),
                 'created_date' => new MongoDate(strtotime('now')),
-                'dbURI' => 'users:' . (string)$id
+                'dbURI'        => 'users:' . (string)$id,
+                'acl'          => ['manager']
             ]);
             echo 'Good: Superuser created. admin@website.com : password', "\n";
         } catch (Exception $e) {
