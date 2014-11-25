@@ -95,6 +95,7 @@ class Service {
             //echo 'Search Index Error: ', $e->getMessage(), "\n";
         }
         $this->clearCache();
+        $this->clearFileCache();
         $this->salt();
         $this->config();
         $this->directories();
@@ -206,6 +207,11 @@ class Service {
             $this->root . '-languages',
             $this->root . '-config'
         ]);
+    }
+
+    private function clearFileCache () {
+        shell_exec('rm -rf ' . $this->root . '/../var/cache');
+        mkdir($this->root . '/../var/cache');
     }
 
     private function salt () {
