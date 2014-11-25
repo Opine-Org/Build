@@ -254,7 +254,7 @@ return [
     }
 
     private function bundle () {
-        $defaultBundle = $this->root . '/../bundles/bundles.yml';
+        $defaultBundle = $this->root . '/../config/bundles.yml';
         if (file_exists($defaultBundle)) {
             return;
         }
@@ -336,7 +336,7 @@ return [
 
     public function container () {
         $this->containerCache->clear();
-        $this->containerCache->read($this->root . '/../container.yml');
+        $this->containerCache->read($this->root . '/../config/container.yml');
         $this->cache->set($this->root . '-container', $this->containerCache->write());
     }
 
