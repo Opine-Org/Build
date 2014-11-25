@@ -312,7 +312,7 @@ return [
                 mkdir($dirPath);
             }
         }
-        foreach (['collections', 'config', 'forms', 'app', 'models', 'views', 'controllers', 'bundles', 'cache'] as $dir) {
+        foreach (['config', 'config/collections', 'config/forms', 'config/managers', 'config/layouts', 'app', 'app/models', 'app/views', 'app/controllers', 'app/helpers', 'var', 'var/cache', 'var/log'] as $dir) {
             $dirPath = $this->root . '/../' . $dir;
             if (!file_exists($dirPath)) {
                 mkdir($dirPath);
@@ -327,7 +327,7 @@ return [
             if (!file_exists($dirPath)) {
                 mkdir($dirPath);
             }
-            $dirPath = $this->root . '/../app/' . $dir;
+            $dirPath = $this->root . '/../config/layouts/' . $dir;
             if (!file_exists($dirPath)) {
                 mkdir($dirPath);
             }
