@@ -37,7 +37,6 @@ use Opine\Interfaces\Route as RouteInterface;
 class Service {
     private $root = false;
     private $pubSubModel;
-    private $fieldModel;
     private $collectionModel;
     private $helperModel;
     private $configModel;
@@ -54,7 +53,6 @@ class Service {
 
     public function __construct (
         $root,
-        $fieldModel,
         $pubSubModel,
         $collectionModel,
         $helperModel,
@@ -71,7 +69,6 @@ class Service {
         $db)
     {
         $this->root = $root;
-        $this->fieldModel = $fieldModel;
         $this->pubSubModel = $pubSubModel;
         $this->collectionModel = $collectionModel;
         $this->helperModel = $helperModel;
@@ -106,7 +103,6 @@ class Service {
         $this->route();
         $this->collections();
         $this->forms();
-        $this->field();
         $this->helpers();
         $this->templatesCompile();
         $this->topics();
@@ -124,10 +120,6 @@ class Service {
 
     public function templatesCompile () {
         $this->handlebarService->build();
-    }
-
-    public function field () {
-        $this->fieldModel->build();
     }
 
     public function environmentCheck () {
