@@ -1,5 +1,5 @@
 imports:
-    - vendor/opine/framework/config/container.yml
+    - ../../framework/config/container.yml
 
 parameters:
 
