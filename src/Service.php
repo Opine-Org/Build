@@ -23,12 +23,8 @@
  * THE SOFTWARE.
  */
 namespace Opine\Build;
-use MongoClient;
-use MongoDB;
-use MongoCollection;
-use MongoId;
-use MongoDate;
-use Exception;
+use MongoClient, MongoDB, MongoCollection, MongoId, MongoDate;
+use RecursiveIteratorIterator, RecursiveDirectoryIterator, FilesystemIterator, Exception;
 use Memcache;
 use Pheanstalk_Pheanstalk;
 use Opine\Interfaces\Cache as CacheInterface;
@@ -38,13 +34,14 @@ class Service {
     private $root = false;
     private $pubSubModel;
     private $collectionModel;
-    private $helperModel;
+    private $helperServiceModel;
     private $configModel;
     private $formModel;
     private $cache;
     private $bundleModel;
     private $search;
     private $route;
+    private $routeModel;
     private $containerCache;
     private $handlebarService;
     private $languageModel;
@@ -55,13 +52,14 @@ class Service {
         $root,
         $pubSubModel,
         $collectionModel,
-        $helperModel,
+        $helperServiceModel,
         $configModel,
         $formModel,
         $bundleModel,
         CacheInterface $cache,
         $search,
         RouteInterface $route,
+        $routeModel,
         $containerCache,
         $handlebarService,
         $languageModel,
@@ -71,13 +69,14 @@ class Service {
         $this->root = $root;
         $this->pubSubModel = $pubSubModel;
         $this->collectionModel = $collectionModel;
-        $this->helperModel = $helperModel;
+        $this->helperServiceModel = $helperServiceModel;
         $this->configModel = $configModel;
         $this->formModel = $formModel;
         $this->bundleModel = $bundleModel;
         $this->cache = $cache;
         $this->search = $search;
         $this->route = $route;
+        $this->routeModel = $routeModel;
         $this->containerCache = $containerCache;
         $this->handlebarService = $handlebarService;
         $this->languageModel = $languageModel;
@@ -97,7 +96,6 @@ class Service {
         $this->config();
         $this->directories();
         $this->db();
-        $this->bundle();
         $this->bundles();
         $this->container();
         $this->route();
@@ -106,7 +104,6 @@ class Service {
         $this->helpers();
         $this->templatesCompile();
         $this->topics();
-        $this->moveStatic();
         $this->languages();
         try {
             $this->adminUserFirst();
@@ -202,8 +199,11 @@ class Service {
     }
 
     private function clearFileCache () {
-        shell_exec('rm -rf ' . $this->root . '/../var/cache');
-        mkdir($this->root . '/../var/cache');
+        $dirPath = $this->root . '/../var/cache';
+        foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dirPath, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST) as $path) {
+            $path->isDir() && !$path->isLink() ? rmdir($path->getPathname()) : unlink($path->getPathname());
+        }
+        rmdir($dirPath);
     }
 
     private function salt () {
@@ -251,14 +251,6 @@ return [
         }
     }
 
-    private function bundle () {
-        $defaultBundle = $this->root . '/../config/bundles.yml';
-        if (file_exists($defaultBundle)) {
-            return;
-        }
-        file_put_contents($defaultBundle, file_get_contents(__DIR__ . '/../static/bundles.yml'));
-    }
-
     private function bundles () {
         $this->cache->set($this->root . '-bundles', $this->bundleModel->build(), 0);
     }
@@ -272,7 +264,7 @@ return [
     }
 
     private function helpers () {
-        $this->helperModel->buildAll();
+        $this->helperServiceModel->buildAll();
         $this->handlebarService->helpersLoad();
     }
 
@@ -287,18 +279,8 @@ return [
         }
     }
 
-    private function moveStatic () {
-        @copy($this->root . '/../vendor/opine/layout/dependencies/jquery.min.js', $this->root . '/js/jquery.min.js');
-        @copy($this->root . '/../vendor/opine/layout/dependencies/jquery.form.js', $this->root . '/js/jquery.form.js');
-        @copy($this->root . '/../vendor/opine/form/js/formXHR.js', $this->root . '/js/formXHR.js');
-        @copy($this->root . '/../vendor/opine/form/js/formHelperSemantic.js', $this->root . '/js/formHelperSemantic.js');
-    }
-
     private function route () {
-        $routePath = $this->root . '/../Route.php';
-        if (!file_exists($routePath)) {
-            file_put_contents($routePath, file_get_contents(__DIR__ . '/../static/Route.php'));
-        }
+        $this->routeModel->build();
         $routes = json_encode($this->route->cacheGenerate());
         $this->cache->set($this->root . '-routes', $routes);
     }
@@ -310,7 +292,7 @@ return [
                 mkdir($dirPath);
             }
         }
-        foreach (['config', 'config/collections', 'config/forms', 'config/managers', 'config/layouts', 'app', 'app/models', 'app/views', 'app/controllers', 'app/helpers', 'var', 'var/cache', 'var/log'] as $dir) {
+        foreach (['config', 'config/routes', 'config/settings', 'config/containers', 'config/collections', 'config/forms', 'config/managers', 'config/layouts', 'app', 'app/models', 'app/views', 'app/controllers', 'app/helpers', 'var', 'var/cache', 'var/log'] as $dir) {
             $dirPath = $this->root . '/../' . $dir;
             if (!file_exists($dirPath)) {
                 mkdir($dirPath);

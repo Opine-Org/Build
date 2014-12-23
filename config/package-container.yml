@@ -1,4 +1,20 @@
 services:
     build:
-        class:     'Opine\Build\Service'
-        arguments: ['%root%', '@pubSubModel', '@collectionModel', '@helperModel', '@configModel', '@formModel', '@bundleModel', '@cache', '@search', '@route', '@containerCache', '@handlebarService', '@languageModel', '@config', '@db']
+        class:     Opine\Build\Service
+        arguments:
+            - %root%
+            - @pubSubModel
+            - @collectionModel
+            - @helperServiceModel
+            - @configModel
+            - @formModel
+            - @bundleModel
+            - @cache
+            - @search
+            - @route
+            - @routeModel
+            - @containerCache
+            - @handlebarService
+            - @languageModel
+            - @config
+            - @db
