@@ -26,7 +26,7 @@
         "opine/bundle"    : "1.9.0",
         "opine/search"    : "dev-master",
         "opine/route"     : "3.0.1",
-        "opine/container" : "dev-master",
+        "opine/container" : "2.0.2",
         "opine/handlebars": "dev-master",
         "opine/language"  : "dev-master"
     },
