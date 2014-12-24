@@ -23,7 +23,7 @@
         "opine/helper"    : "dev-master",
         "opine/config"    : "3.0.0",
         "opine/form"      : "dev-master",
-        "opine/bundle"    : "dev-master",
+        "opine/bundle"    : "1.9.0",
         "opine/search"    : "dev-master",
         "opine/route"     : "3.0.1",
         "opine/container" : "dev-master",
