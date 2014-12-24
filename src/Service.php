@@ -23,14 +23,21 @@
  * THE SOFTWARE.
  */
 namespace Opine\Build;
-use MongoClient, MongoDB, MongoCollection, MongoId, MongoDate;
-use RecursiveIteratorIterator, RecursiveDirectoryIterator, FilesystemIterator, Exception;
+
+use MongoClient;
+use MongoDB;
+use MongoDate;
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
+use FilesystemIterator;
+use Exception;
 use Memcache;
 use Pheanstalk_Pheanstalk;
 use Opine\Interfaces\Cache as CacheInterface;
 use Opine\Interfaces\Route as RouteInterface;
 
-class Service {
+class Service
+{
     private $root = false;
     private $pubSubModel;
     private $collectionModel;
@@ -49,7 +56,7 @@ class Service {
     private $config;
     private $db;
 
-    public function __construct (
+    public function __construct(
         $root,
         $pubSubModel,
         $collectionModel,
@@ -87,7 +94,8 @@ class Service {
         $this->db = $db;
     }
 
-    public function project () {
+    public function project()
+    {
         try {
             $this->search->indexCreateDefault();
         } catch (Exception $e) {
@@ -110,20 +118,24 @@ class Service {
         $this->languages();
         try {
             $this->adminUserFirst();
-        } catch (Exception $e) {}
+        } catch (Exception $e) {
+        }
         echo 'Built', "\n";
     }
 
-    public function languages () {
-        $this->cache->set($this->root . '-languages', $this->languageModel->build(), 0);
+    public function languages()
+    {
+        $this->cache->set($this->root.'-languages', $this->languageModel->build(), 0);
     }
 
-    public function templatesCompile () {
+    public function templatesCompile()
+    {
         $this->handlebarService->build();
     }
 
-    public function environmentCheck () {
-        $authConfigFile = $this->root . '/../config/auth.php';
+    public function environmentCheck()
+    {
+        $authConfigFile = $this->root.'/../config/auth.php';
         if (file_exists($authConfigFile)) {
             echo 'Good: Authentication salt file already exists.', "\n";
         }
@@ -184,67 +196,74 @@ class Service {
         }
     }
 
-    private function config () {
+    private function config()
+    {
         $this->configModel->build($this->root);
     }
 
-    private function clearCache () {
+    private function clearCache()
+    {
         $this->cache->deleteBatch([
-            $this->root . '-collections',
-            $this->root . '-forms',
-            $this->root . '-bundles',
-            $this->root . '-topics',
-            $this->root . '-routes',
-            $this->root . '-container',
-            $this->root . '-languages',
-            $this->root . '-config'
+            $this->root.'-collections',
+            $this->root.'-forms',
+            $this->root.'-bundles',
+            $this->root.'-topics',
+            $this->root.'-routes',
+            $this->root.'-container',
+            $this->root.'-languages',
+            $this->root.'-config',
         ]);
     }
 
-    private function clearFileCache () {
-        $dirPath = $this->root . '/../var/cache';
-        foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dirPath, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST) as $path) {
+    private function clearFileCache()
+    {
+        $dirPath = $this->root.'/../var/cache';
+        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dirPath, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST) as $path) {
             $path->isDir() && !$path->isLink() ? rmdir($path->getPathname()) : unlink($path->getPathname());
         }
         rmdir($dirPath);
     }
 
-    private function salt () {
-        $authConfigFile = $this->root . '/../config/settings/auth.yml';
+    private function salt()
+    {
+        $authConfigFile = $this->root.'/../config/settings/auth.yml';
         if (file_exists($authConfigFile)) {
             return;
         }
         file_put_contents($authConfigFile, 'settings:
-    salt: ' . uniqid() . uniqid() . uniqid());
+    salt: '.uniqid().uniqid().uniqid());
     }
 
-    private function adminUserFirst () {
+    private function adminUserFirst()
+    {
         if (!class_exists('MongoClient', false)) {
             echo 'Note: MongoDB client driver not installed.', "\n";
+
             return;
         }
         try {
-            $auth = require $this->root . '/../config/auth.php';
+            $auth = require $this->root.'/../config/auth.php';
             if (!isset($auth['salt'])) {
                 echo 'Problem: No Salt set in auth config file';
             }
             $found = $this->db->collection('users')->findOne(['groups' => 'manager'], ['_id', 'groups']);
             if (isset($found['_id'])) {
                 echo 'Good: Superadmin already exists.', "\n";
+
                 return;
             }
             $id = $this->db->id();
-            $dbURI = 'users:' . (string)$id;
+            $dbURI = 'users:'.(string) $id;
             $this->db->document($dbURI)->upsert([
                 '_id'          => $id,
                 'first_name'   => 'Admin',
                 'last_name'    => 'Admin',
                 'email'        => 'admin@website.com',
                 'groups'       => ['manager'],
-                'password'     => sha1($auth['salt'] . 'password'),
+                'password'     => sha1($auth['salt'].'password'),
                 'created_date' => new MongoDate(strtotime('now')),
-                'dbURI'        => 'users:' . (string)$id,
-                'acl'          => ['manager']
+                'dbURI'        => 'users:'.(string) $id,
+                'acl'          => ['manager'],
             ]);
             echo 'Good: Superuser created. admin@website.com : password', "\n";
         } catch (Exception $e) {
@@ -252,94 +271,107 @@ class Service {
         }
     }
 
-    private function bundles () {
-        $this->cache->set($this->root . '-bundles', $this->bundleModel->build(), 0);
+    private function bundles()
+    {
+        $this->cache->set($this->root.'-bundles', $this->bundleModel->build(), 0);
         $this->bundleBuild->build();
     }
 
-    private function collections () {
-        $this->cache->set($this->root . '-collections', $this->collectionModel->build());
+    private function collections()
+    {
+        $this->cache->set($this->root.'-collections', $this->collectionModel->build());
     }
 
-    private function forms () {
-        $this->cache->set($this->root . '-forms', $this->formModel->build());
+    private function forms()
+    {
+        $this->cache->set($this->root.'-forms', $this->formModel->build());
     }
 
-    private function helpers () {
+    private function helpers()
+    {
         $this->helperServiceModel->buildAll();
         $this->handlebarService->helpersLoad();
     }
 
-    private function topics () {
-        $this->cache->set($this->root . '-topics', json_encode($this->pubSubModel->build()));
+    private function topics()
+    {
+        $this->cache->set($this->root.'-topics', json_encode($this->pubSubModel->build()));
     }
 
-    private function db () {
-        $dbPath = $this->root . '/../config/db.php';
+    private function db()
+    {
+        $dbPath = $this->root.'/../config/db.php';
         if (!file_exists($dbPath)) {
-            file_put_contents($dbPath, file_get_contents(__DIR__ . '/../static/db.php'));
+            file_put_contents($dbPath, file_get_contents(__DIR__.'/../static/db.php'));
         }
     }
 
-    private function route () {
+    private function route()
+    {
         $this->routeModel->build();
         $routes = json_encode($this->route->cacheGenerate());
-        $this->cache->set($this->root . '-routes', $routes);
+        $this->cache->set($this->root.'-routes', $routes);
     }
 
-    private function directories () {
+    private function directories()
+    {
         foreach (['css', 'js', 'layouts', 'partials', 'images', 'fonts', 'helpers'] as $dir) {
-            $dirPath = $this->root . '/' . $dir;
+            $dirPath = $this->root.'/'.$dir;
             if (!file_exists($dirPath)) {
                 mkdir($dirPath);
             }
         }
         foreach (['config', 'config/routes', 'config/settings', 'config/containers', 'config/collections', 'config/forms', 'config/managers', 'config/layouts', 'app', 'app/models', 'app/views', 'app/controllers', 'app/helpers', 'var', 'var/cache', 'var/log'] as $dir) {
-            $dirPath = $this->root . '/../' . $dir;
+            $dirPath = $this->root.'/../'.$dir;
             if (!file_exists($dirPath)) {
                 mkdir($dirPath);
             }
         }
         foreach (['collections', 'documents', 'forms'] as $dir) {
-            $dirPath = $this->root . '/layouts/' . $dir;
+            $dirPath = $this->root.'/layouts/'.$dir;
             if (!file_exists($dirPath)) {
                 mkdir($dirPath);
             }
-            $dirPath = $this->root . '/partials/' . $dir;
+            $dirPath = $this->root.'/partials/'.$dir;
             if (!file_exists($dirPath)) {
                 mkdir($dirPath);
             }
-            $dirPath = $this->root . '/../config/layouts/' . $dir;
+            $dirPath = $this->root.'/../config/layouts/'.$dir;
             if (!file_exists($dirPath)) {
                 mkdir($dirPath);
             }
         }
     }
 
-    public function container () {
+    public function container()
+    {
         $this->containerCache->clear();
-        $this->containerCache->read($this->root . '/../config/containers/container.yml');
-        $this->cache->set($this->root . '-container', $this->containerCache->write());
+        $this->containerCache->read($this->root.'/../config/containers/container.yml');
+        $this->cache->set($this->root.'-container', $this->containerCache->write());
     }
 
-    public function collectionInstall ($collection) {
-        $path = $this->root . '/../collections/' . $collection . '.php';
+    public function collectionInstall($collection)
+    {
+        $path = $this->root.'/../collections/'.$collection.'.php';
         if (file_exists($path)) {
             echo $path, ': already exists.', "\n";
+
             return;
         }
-        $remote = 'https://raw.githubusercontent.com/Opine-Org/Collection/master/available/' . $collection . '.php';
+        $remote = 'https://raw.githubusercontent.com/Opine-Org/Collection/master/available/'.$collection.'.php';
         file_put_contents($path, file_get_contents($remote));
         echo $path, ': saved.', "\n";
     }
 
-    public function managerInstall ($manager) {
-        $path = $this->root . '/../managers/' . $manager . '.php';
+    public function managerInstall($manager)
+    {
+        $path = $this->root.'/../managers/'.$manager.'.php';
         if (file_exists($path)) {
             echo $path, ': already exists.', "\n";
+
             return;
         }
-        $remote = 'https://raw.githubusercontent.com/Opine-Org/Semantic-CM/master/available/' . $manager . '.php';
+        $remote = 'https://raw.githubusercontent.com/Opine-Org/Semantic-CM/master/available/'.$manager.'.php';
         file_put_contents($path, file_get_contents($remote));
         echo $path, ': saved.', "\n";
     }
