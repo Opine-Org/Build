@@ -39,6 +39,7 @@ class Service {
     private $formModel;
     private $cache;
     private $bundleModel;
+    private $bundleBuild;
     private $search;
     private $route;
     private $routeModel;
@@ -56,6 +57,7 @@ class Service {
         $configModel,
         $formModel,
         $bundleModel,
+        $bundleBuild,
         CacheInterface $cache,
         $search,
         RouteInterface $route,
@@ -73,6 +75,7 @@ class Service {
         $this->configModel = $configModel;
         $this->formModel = $formModel;
         $this->bundleModel = $bundleModel;
+        $this->bundleBuild = $bundleBuild;
         $this->cache = $cache;
         $this->search = $search;
         $this->route = $route;
@@ -207,14 +210,12 @@ class Service {
     }
 
     private function salt () {
-        $authConfigFile = $this->root . '/../config/auth.php';
+        $authConfigFile = $this->root . '/../config/settings/auth.yml';
         if (file_exists($authConfigFile)) {
             return;
         }
-        file_put_contents($authConfigFile, '<?php
-return [
-    "salt" => "' . uniqid() . uniqid() . uniqid() . '"
-];');
+        file_put_contents($authConfigFile, 'settings:
+    salt: ' . uniqid() . uniqid() . uniqid());
     }
 
     private function adminUserFirst () {
@@ -253,6 +254,7 @@ return [
 
     private function bundles () {
         $this->cache->set($this->root . '-bundles', $this->bundleModel->build(), 0);
+        $this->bundleBuild->build();
     }
 
     private function collections () {
@@ -316,7 +318,7 @@ return [
 
     public function container () {
         $this->containerCache->clear();
-        $this->containerCache->read($this->root . '/../config/container.yml');
+        $this->containerCache->read($this->root . '/../config/containers/container.yml');
         $this->cache->set($this->root . '-container', $this->containerCache->write());
     }
 

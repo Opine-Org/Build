@@ -9,6 +9,7 @@ services:
             - @configModel
             - @formModel
             - @bundleModel
+            - @bundleBuild
             - @cache
             - @search
             - @route
