@@ -1,0 +1,3 @@
+settings:
+    name: db
+    conn: mongodb://user:pass@localhost/db

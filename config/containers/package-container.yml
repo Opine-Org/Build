@@ -3,19 +3,73 @@ services:
         class:     Opine\Build\Service
         arguments:
             - %root%
-            - @pubSubModel
-            - @collectionModel
-            - @helperServiceModel
-            - @configModel
-            - @formModel
-            - @bundleModel
-            - @bundleBuild
             - @cache
-            - @search
+            - @buildConfig
+            - @buildBundles
+            - @buildContainer
+            - @buildRoute
+            - @buildCollections
+            - @buildForms
+            - @buildHelpers
+            - @buildTemplates
+            - @buildTopics
+            - @buildPerson
+            - @buildLanguage
+    buildBundles:
+        class: Opine\Build\Bundles
+        arguments:
+            - @bundleBuild
+    buildCollections:
+        class: Opine\Build\Collections
+        arguments:
+            - @collectionModel
+    buildConfig:
+        class: Opine\Build\Config
+        arguments:
+            - @configModel
+    buildContainer:
+        class: Opine\Build\Container
+        arguments:
+            - %root%
+            - @containerCache
+    buildEnvironment:
+        class: Opine\Build\Environment
+        arguments:
+            - %root%
+            - @config
+    buildForms:
+        class: Opine\Build\Forms
+        arguments:
+            - @formModel
+    buildHelpers:
+        class: Opine\Build\Helpers
+        arguments:
+            - @helperServiceModel
+            - @handlebarService
+    buildLanguage:
+        class: Opine\Build\Language
+        arguments:
+            - @languageModel
+    buildPerson:
+        class: Opine\Build\Person
+        arguments:
+            - %root%
+            - @db
+    buildRoute:
+        class: Opine\Build\Route
+        arguments:
+            - %root%
             - @route
             - @routeModel
-            - @containerCache
+    buildSearch:
+        class: Opine\Build\Search
+        arguments:
+            - @search
+    buildTemplates:
+        class: Opine\Build\Templates
+        arguments:
             - @handlebarService
-            - @languageModel
-            - @config
-            - @db
+    buildTopics:
+        class: Opine\Build\Topics
+        arguments:
+            - @pubSubModel

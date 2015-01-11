@@ -1,17 +1,15 @@
-includes:
+imports:
     - package-container.yml
+    - ../../vendor/opine/bundle/config/containers/package-container.yml
+    - ../../vendor/opine/cache/config/containers/package-container.yml
     - ../../vendor/opine/collection/config/containers/package-container.yml
-    - ../../vendor/opine/route/config/containers/package-container.yml
+    - ../../vendor/opine/config/config/containers/package-container.yml
+    - ../../vendor/opine/container/config/containers/package-container.yml
+    - ../../vendor/opine/db/config/containers/package-container.yml
     - ../../vendor/opine/form/config/containers/package-container.yml
     - ../../vendor/opine/language/config/containers/package-container.yml
-    - ../../vendor/opine/config/config/containers/package-container.yml
     - ../../vendor/opine/helper/config/containers/package-container.yml
-    - ../../vendor/opine/bundle/config/containers/package-container.yml
-    - ../../vendor/opine/field/config/containers/package-container.yml
-    - ../../vendor/opine/container/config/containers/package-container.yml
-    - ../../vendor/opine/layout/config/containers/package-container.yml
     - ../../vendor/opine/handlebars/config/containers/package-container.yml
-    - ../../vendor/opine/db/config/containers/package-container.yml
-    - ../../vendor/opine/person/config/containers/package-container.yml
-    - ../../vendor/opine/queue/config/containers/package-container.yml
+    - ../../vendor/opine/pubsub/config/containers/package-container.yml
+    - ../../vendor/opine/route/config/containers/package-container.yml
     - ../../vendor/opine/search/config/containers/package-container.yml
