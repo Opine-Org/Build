@@ -1,3 +1,5 @@
 /vendor
 /composer.lock
 /report
+/var/cache/*.json
+/var/cache/*.php

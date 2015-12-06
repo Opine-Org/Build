@@ -31,12 +31,12 @@
         "opine/search"    : "~2.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "3.7.32"
+        "phpunit/phpunit": "5.0"
     },
     "autoload": {
         "psr-4": {
             "Opine\\Build\\": "src/"
         }
     },
-    "version": "2.0.9"
+    "version": "2.0.10"
 }
