@@ -45,8 +45,6 @@ class Service
     private $topics;
     private $person;
     private $languages;
-    private $environment;
-    private $projectName;
     private $cachePrefix;
 
     public function __construct($root, CacheInterface $cache, $config, $bundles, $container, $route, $collections, $forms, $helpers, $templates, $topics, $person, $languages)
@@ -66,20 +64,20 @@ class Service
         $this->languages = $languages;
 
         // set environment
-        $this->environment = 'default';
+        $environment = 'default';
         $test = getenv('OPINE_ENV');
         if ($test !== false) {
-            $this->environment = $test;
+            $environment = $test;
         }
 
-        // set environment
-        $this->projectName = 'project';
+        // set project name
+        $projectName = 'project';
         $test = getenv('OPINE_PROJECT');
         if ($test !== false) {
-            $this->projectName = $test;
+            $projectName = $test;
         }
 
-        $this->cachePrefix = $this->projectName . $this->environment;
+        $this->cachePrefix = $projectName . $environment;
     }
 
     public function project()
