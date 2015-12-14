@@ -34,7 +34,6 @@ class Service
 {
     private $root;
     private $cache;
-    private $cacheKey;
     private $config;
     private $bundles;
     private $container;
@@ -46,12 +45,14 @@ class Service
     private $topics;
     private $person;
     private $languages;
+    private $environment;
+    private $projectName;
+    private $cachePrefix;
 
     public function __construct($root, CacheInterface $cache, $config, $bundles, $container, $route, $collections, $forms, $helpers, $templates, $topics, $person, $languages)
     {
         $this->root = $root;
         $this->cache = $cache;
-        $this->cacheKey = $this->root.'-opine';
         $this->config = $config;
         $this->bundles = $bundles;
         $this->container = $container;
@@ -63,6 +64,22 @@ class Service
         $this->topics = $topics;
         $this->person = $person;
         $this->languages = $languages;
+
+        // set environment
+        $this->environment = 'default';
+        $test = getenv('OPINE_ENV');
+        if ($test !== false) {
+            $this->environment = $test;
+        }
+
+        // set environment
+        $this->projectName = 'project';
+        $test = getenv('OPINE_PROJECT');
+        if ($test !== false) {
+            $this->projectName = $test;
+        }
+
+        $this->cachePrefix = $this->projectName . $this->environment;
     }
 
     public function project()
@@ -98,7 +115,7 @@ class Service
             'config'      => $this->getFile($this->root.'/../var/cache/config.json')
         ];
 
-        $this->cache->set($this->cacheKey, json_encode($cache));
+        $this->cache->set($this->cachePrefix . '-opine', json_encode($cache));
         return $cache;
     }
 
