@@ -105,14 +105,14 @@ class Service
 
         //put cache data into memcache
         $cache = [
-            'collections' => $this->getFile($this->root.'/../var/cache/collections.json'),
-            'forms'       => $this->getFile($this->root.'/../var/cache/forms.json'),
-            'bundles'     => $this->getFile($this->root.'/../var/cache/bundles.json'),
-            'topics'      => $this->getFile($this->root.'/../var/cache/topics.json'),
-            'routes'      => $this->getFile($this->root.'/../var/cache/routes.json'),
-            'container'   => $this->getFile($this->root.'/../var/cache/container.json'),
-            'languages'   => $this->getFile($this->root.'/../var/cache/languages.json'),
-            'config'      => $this->getFile($this->root.'/../var/cache/config.json')
+            'collections' => json_decode($this->getFile($this->root.'/../var/cache/collections.json', true)),
+            'forms'       => json_decode($this->getFile($this->root.'/../var/cache/forms.json', true)),
+            'bundles'     => json_decode($this->getFile($this->root.'/../var/cache/bundles.json', true)),
+            'topics'      => json_decode($this->getFile($this->root.'/../var/cache/topics.json', true)),
+            'routes'      => json_decode($this->getFile($this->root.'/../var/cache/routes.json', true)),
+            'container'   => json_decode($this->getFile($this->root.'/../var/cache/container.json', true)),
+            'languages'   => json_decode($this->getFile($this->root.'/../var/cache/languages.json', true)),
+            'config'      => json_decode($this->getFile($this->root.'/../var/cache/config.json', true))
         ];
 
         $this->cache->set($this->cachePrefix . '-opine', json_encode($cache));
@@ -129,7 +129,7 @@ class Service
 
     private function clearCache()
     {
-        $this->cache->delete($this->cacheKey);
+        $this->cache->delete($this->cachePrefix . '-opine');
     }
 
     private function clearFileCache()
