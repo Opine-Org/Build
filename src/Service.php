@@ -38,16 +38,10 @@ class Service
     private $bundles;
     private $container;
     private $route;
-    private $collections;
-    private $forms;
-    private $helpers;
-    private $templates;
     private $topics;
-    private $person;
-    private $languages;
     private $cachePrefix;
 
-    public function __construct($root, CacheInterface $cache, $config, $bundles, $container, $route, $collections, $forms, $helpers, $templates, $topics, $person, $languages)
+    public function __construct($root, CacheInterface $cache, $config, $bundles, $container, $route, $topics)
     {
         $this->root = $root;
         $this->cache = $cache;
@@ -55,13 +49,7 @@ class Service
         $this->bundles = $bundles;
         $this->container = $container;
         $this->route = $route;
-        $this->collections = $collections;
-        $this->forms = $forms;
-        $this->helpers = $helpers;
-        $this->templates = $templates;
         $this->topics = $topics;
-        $this->person = $person;
-        $this->languages = $languages;
 
         // set environment
         $environment = 'default';
@@ -93,23 +81,14 @@ class Service
         $this->bundles->build();
         $this->container->build();
         $this->route->build();
-        $this->collections->build();
-        $this->forms->build();
-        $this->helpers->build();
-        $this->templates->build();
         $this->topics->build();
-        $this->person->build();
-        $this->languages->build();
 
         //put cache data into memcache
         $cache = [
-            'collections' => $this->getFile($this->root.'/../var/cache/collections.json'),
-            'forms'       => $this->getFile($this->root.'/../var/cache/forms.json'),
             'bundles'     => $this->getFile($this->root.'/../var/cache/bundles.json'),
             'topics'      => $this->getFile($this->root.'/../var/cache/topics.json'),
             'routes'      => $this->getFile($this->root.'/../var/cache/routes.json'),
             'container'   => $this->getFile($this->root.'/../var/cache/container.json'),
-            'languages'   => $this->getFile($this->root.'/../var/cache/languages.json'),
             'config'      => $this->getFile($this->root.'/../var/cache/config.json')
         ];
 

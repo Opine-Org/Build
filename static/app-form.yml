@@ -1,6 +1,0 @@
-regions:
-    {{$form}}:
-        url: '/api/form/{{$form}}'
-        args: []
-        partial: 'forms/{{$form}}.hbs'
-        type: 'Form'
