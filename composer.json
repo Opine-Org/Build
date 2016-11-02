@@ -31,6 +31,5 @@
         "psr-4": {
             "Opine\\Build\\": "src/"
         }
-    },
-    "version": "2.0.17"
+    }
 }
