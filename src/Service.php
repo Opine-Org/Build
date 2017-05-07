@@ -39,7 +39,16 @@ class Service
     private $container;
     private $route;
     private $topics;
-    private $cachePrefix;
+
+    private static function environment()
+    {
+        return empty(getenv('OPINE_ENV')) ? 'dev' : getenv('OPINE_ENV');
+    }
+
+    private static function projectName()
+    {
+        return empty(getenv('OPINE_PROJECT')) ? 'project' : getenv('OPINE_PROJECT');
+    }
 
     public function __construct($root, CacheInterface $cache, $config, $bundles, $container, $route, $topics)
     {
@@ -50,22 +59,6 @@ class Service
         $this->container = $container;
         $this->route = $route;
         $this->topics = $topics;
-
-        // set environment
-        $environment = 'default';
-        $test = getenv('OPINE_ENV');
-        if ($test !== false) {
-            $environment = $test;
-        }
-
-        // set project name
-        $projectName = 'project';
-        $test = getenv('OPINE_PROJECT');
-        if ($test !== false) {
-            $projectName = $test;
-        }
-
-        $this->cachePrefix = $projectName . $environment;
     }
 
     public function project()
@@ -92,7 +85,8 @@ class Service
             'config'      => $this->getFile($this->root.'/../var/cache/config.json')
         ];
 
-        $this->cache->set($this->cachePrefix . '-opine', json_encode($cache));
+        $cachePrefix = self::projectName() . self::environment();
+        $this->cache->set($cachePrefix . '-opine', json_encode($cache));
         return $cache;
     }
 
@@ -106,7 +100,8 @@ class Service
 
     private function clearCache()
     {
-        $this->cache->delete($this->cachePrefix . '-opine');
+        $cachePrefix = self::projectName() . self::environment();
+        $this->cache->delete($cachePrefix . '-opine');
     }
 
     private function clearFileCache()
